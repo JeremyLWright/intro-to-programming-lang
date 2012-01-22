@@ -13,7 +13,7 @@ class IntWithGcdRecursiveOperator
     }
 
 
-    public int OpGcd(IntWithGcdRecursiveOperator val)
+    public int OpGcd(final IntWithGcdRecursiveOperator val)
     {
         return gcd(value, val.getValue());
     }
