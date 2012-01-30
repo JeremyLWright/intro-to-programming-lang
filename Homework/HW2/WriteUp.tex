@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{syntax}
+\usepackage[left=0.75in, top=1in, right=0.75in, bottom=1in]{geometry}
+\pagestyle{plain}
+\begin{document}
+    \rhead{Jeremy Wright\\CSE 340: Homework 1}
+    \thispagestyle{fancy}
+
+    % The list environment is just to get some vertical spacing
+    \list{} \item \endlist
+
+    % Let the homework begin!
+    \section*{6.10}
+    \begin{grammar}
+        <A> $\rightarrow$\\
+        <translation-unit> $\rightarrow$ external-declaration \{ translation-unit
+        external-declaration \} \\
+        <external-declaration> $\rightarrow$ function-definition | declaration
+        \\
+        <functional-definition> $\rightarrow$ declaration-specifiers declarator
+        declaration-list compound-statement 
+        \alt declaration-specifiers declarator compound-statement
+        \alt declarator declaration-list compound-statement
+        \alt declarator compound-statement \\
+        <declaration> $\rightarrow$ declaration-specifiers ';'
+        | declaration-specifiers init-declarator-list ';' \\
+        <init-declarator-list> $\rightarrow$ init-declarator
+        | init-declarator-list ',' init-declarator \\
+        <init-declarator> $\rightarrow$ declarator | declarator '=' initializer
+        \\
+        <declarator> $\rightarrow$ pointer direct-declarator | direct-declarator
+        \\
+        <pointer> $\rightarrow$ '*' type-qualifier-list pointer | '*'
+        type-qualifier-list | '*' pointer | '*' \\
+        <direct-declarator> $\rightarrow$ ID 
+        \alt '(' declarator ')' 
+        \alt direct\_declarator '[' constant\_expression ']'
+        \alt direct\_declarator '(' parameter\_type\_list ')'
+        \alt direct\_declarator '(' identifier\_list ')'
+        \alt direct\_declarator '(' ')'\\
+    \end{grammar}
+\end{document}
