@@ -18,7 +18,7 @@
     % Let the homework begin!
     \section*{6.10}
     \begin{grammar}
-        <A> $\rightarrow$\\
+        <A> $\rightarrow$ 
         <translation-unit> $\rightarrow$ external-declaration \{ translation-unit
         external-declaration \} \\
         <external-declaration> $\rightarrow$ function-definition | declaration
@@ -26,23 +26,24 @@
         <functional-definition> $\rightarrow$ declaration-specifiers declarator
         declaration-list compound-statement 
         \alt declaration-specifiers declarator compound-statement
-        \alt declarator declaration-list compound-statement
-        \alt declarator compound-statement \\
-        <declaration> $\rightarrow$ declaration-specifiers ';'
-        | declaration-specifiers init-declarator-list ';' \\
+        \alt declarator \{ declaration-list compound-statement
+        | compound-statement \} \\
+        <declaration> $\rightarrow$ declaration-specifiers `;'
+        | declaration-specifiers init-declarator-list `;' \\
         <init-declarator-list> $\rightarrow$ init-declarator
-        | init-declarator-list ',' init-declarator \\
-        <init-declarator> $\rightarrow$ declarator | declarator '=' initializer
+        | init-declarator-list `,' init-declarator \\
+        <init-declarator> $\rightarrow$ declarator | declarator `=' initializer
         \\
         <declarator> $\rightarrow$ pointer direct-declarator | direct-declarator
         \\
-        <pointer> $\rightarrow$ '*' type-qualifier-list pointer | '*'
-        type-qualifier-list | '*' pointer | '*' \\
+        <pointer> $\rightarrow$ `*' type-qualifier-list pointer | `*'
+        type-qualifier-list | `*' pointer | `*' \\
         <direct-declarator> $\rightarrow$ ID 
-        \alt '(' declarator ')' 
-        \alt direct\_declarator '[' constant\_expression ']'
-        \alt direct\_declarator '(' parameter\_type\_list ')'
-        \alt direct\_declarator '(' identifier\_list ')'
-        \alt direct\_declarator '(' ')'\\
+        \alt `(' declarator ')' | \{ direct\_declarator 
+        \alt `[' constant\_expression `]'
+        \alt  `(' parameter\_type\_list `)'
+        \alt `(' identifier\_list `)'
+        \alt  `(' `)' \} \\
+
     \end{grammar}
 \end{document}
