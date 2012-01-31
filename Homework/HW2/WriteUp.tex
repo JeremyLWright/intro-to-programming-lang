@@ -52,6 +52,28 @@
         \alt  `(' `)' \} \\
 
     \end{grammar}
+    \section*{6.12}
+    \section*{6.13}
+    \subsection*{b}
+    \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ term \{ + term \} \\
+        <term> $\rightarrow$ factor \{ * factor \} \\
+        <factor> $\rightarrow$ ( expr ) | number  |  number\\
+        <number> $\rightarrow$ `-' digit \{ digit \} \\
+        <digit> $\rightarrow$ [0-9] \\
+    \end{grammar}
+
+    \subsection*{c}
+     \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ term \{ + term \} \\
+        <term> $\rightarrow$ factor \{ * factor \} \\
+        <factor> $\rightarrow$ ( expr ) | number  | `-' number\\
+        <number> $\rightarrow$ digit \{ digit \} \\
+        <digit> $\rightarrow$ [0-9] \\
+    \end{grammar}
+
 
     \section*{6.14}
     \subsection*{e}
@@ -69,7 +91,7 @@
                                          ]
                                          [factor [ number [digit [.x 5]]]]
                                         ] [.x )]
-                                        ]]]]]]]]]]
+                                        ]]]]]] [.x ) ]]]]]
 
 
     \section*{6.42}
@@ -92,5 +114,8 @@
                                 [expr [.x a] 
                                 [ (list)
                                 [ expr [.x a]]]]]]]]]]]
+
+    \section*{6.46}
+    \section*{6.48}
 
 \end{document}
