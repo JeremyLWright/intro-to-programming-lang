@@ -6,6 +6,7 @@
 \usepackage{enumerate}
 \usepackage{fancyhdr}
 \usepackage{syntax}
+\usepackage{synttree}
 \usepackage[left=0.75in, top=1in, right=0.75in, bottom=1in]{geometry}
 \pagestyle{plain}
 \begin{document}
@@ -16,6 +17,11 @@
     \list{} \item \endlist
 
     % Let the homework begin!
+    \section*{6.5}
+    \subsection*{a}
+    All numbers written in scientific notation.
+    \subsection*{b}
+    ( [a-z] | \_)+([0-9]*|[a-z]*|\_)*
     \section*{6.10}
     \begin{grammar}
         <A> $\rightarrow$ 
@@ -46,4 +52,45 @@
         \alt  `(' `)' \} \\
 
     \end{grammar}
+
+    \section*{6.14}
+    \subsection*{e}
+    \synttree[ expr
+            [ term
+            [ factor
+            [ (expr) [.x (] [expr + term [ term [ factor [ number [digit [.x 2]]]]]
+ [.x + ]
+                                                   [ factor
+                                        [ (expr) [.x ( ]
+                                        [ expr + term [.x 3 + ]
+                                        [ factor
+                                        [ (expr) [.x (] [expr + term
+                                        [ term [ factor [number [digit [.x 4 +]]]]
+                                         ]
+                                         [factor [ number [digit [.x 5]]]]
+                                        ] [.x )]
+                                        ]]]]]]]]]]
+
+
+    \section*{6.42}
+    \subsection*{a}
+    \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ ( list ) | a \\
+        <list> $\rightarrow$ list, {expr} \\
+    \end{grammar}
+
+    \subsection*{b}
+    \synttree[ expr 
+                [ ( list ) 
+                [ expr 
+                [ (list) 
+                [ list, expr
+                [ list, expr
+                [ expr [.x a]] [list, expr
+                                [expr [.x a]]
+                                [expr [.x a] 
+                                [ (list)
+                                [ expr [.x a]]]]]]]]]]]
+
 \end{document}
