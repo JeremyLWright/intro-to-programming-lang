@@ -21,6 +21,7 @@ int yyerror (char* s)  /* Called by yyparse on error */
         printf("line %d syntax error\n", current_line_number);
     }
 #endif
+    current_line_number++;
 }
  
 YYSTYPE parse_complete(YYSTYPE const result)
