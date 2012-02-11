@@ -2,7 +2,9 @@
 
 %{
 #define YYSTYPE int
+#define YYERROR_VERBOSE
 #include <math.h>
+#include <string.h>
 #include <ctype.h>
 #include <stdio.h>
 %}
@@ -10,7 +12,7 @@
 /* BISON Declarations */
 %token NUM
 %left '&'
-%left MAX     /* unary % max function */
+%left PERCENT_EXPR     /* unary % percent_expr function */
 %right '@'
 
 /* Grammar follows */
@@ -24,9 +26,9 @@ line:     '\n'
 ;
 
 exp:      NUM                { $$ = $1;         }
-        | exp '&' exp        { $$ = gcd($1+2, $3+3);    }
-        | '%' exp  %prec MAX { $$ = max(5*$2, (3*$2+10));        }
-        | exp '@' exp        { $$ = at_expr(($1), $3); }
+        | exp '&' exp        { $$ = ampr_expr($1, $3);    }
+        | '%' exp  %prec PERCENT_EXPR { $$ = percent_expr($2);        }
+        | exp '@' exp        { $$ = at_expr($1, $3); }
         | '(' exp ')'        { $$ = $2;         }
 ;
 %%
@@ -58,7 +60,20 @@ yylex ()
 yyerror (s)  /* Called by yyparse on error */
      char *s;
 {
-  printf ("%s\n", s);
+#if 0
+  printf ("%s\n", s); //Print the verbose bison error
+#else
+    //Look through the error message from bison, if it says $undefined then we have a "lexical error"
+    //Otherwise we have a "syntax error"
+    if(strstr(s, "undefined") != NULL)
+    {
+        printf("lexical error\n");
+    }
+    else
+    {
+        printf("syntax error\n");
+    }
+#endif
 }
 
 main ()
@@ -66,31 +81,38 @@ main ()
   yyparse ();
 }
 
-YYSTYPE max(YYSTYPE a, YYSTYPE b)
+YYSTYPE percent_expr(YYSTYPE const a)
 {
-    return (b > a) ? b : a;
+    printf( "%% %d\n", a);
+    YYSTYPE a2 = 5*a;
+    YYSTYPE b = 3*a+10;
+    return (b > a2) ? b : a2;
 }
 
-YYSTYPE at_expr(YYSTYPE a, YYSTYPE b)
+YYSTYPE at_expr(YYSTYPE const a, YYSTYPE const b)
 {
+    printf( "%d @ %d\n", a, b);
     return (a+5)%b;
 }
 
-YYSTYPE gcd(YYSTYPE a, YYSTYPE b)
+YYSTYPE ampr_expr(YYSTYPE const a, YYSTYPE const b)
 {
+    YYSTYPE a2 = a+2;
+    YYSTYPE b2 = b+3;
+    printf( "%d & %d\n", a, b);
     YYSTYPE c;
-    if(a<b)
+    if(a2<b2)
     {
-        c = a;
-        a = b;
-        b = c;
+        c = a2;
+        a2 = b2;
+        b2 = c;
     }
     while(1)
     {
-        c = a%b;
+        c = a2%b2;
         if(c==0)
-            return b;
-        a = b;
-        b = c;
+            return b2;
+        a2 = b2;
+        b2 = c;
     }
 }
