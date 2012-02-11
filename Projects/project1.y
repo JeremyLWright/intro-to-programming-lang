@@ -7,6 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+int current_line_number = 1;
 %}
 
 /* BISON Declarations */
@@ -22,14 +23,15 @@ input:    /* empty string */
 ;
 
 line:     '\n'
-        | exp '\n'  { printf ("result: %d\n", $1); }
+        | exp '\n'  { parse_complete($1); }
+        | error '\n' { yyerrok } /* continue parsing after an error */
 ;
 
 exp:      NUM                { $$ = $1;         }
         | exp '&' exp        { $$ = ampr_expr($1, $3);    }
         | '%' exp  %prec PERCENT_EXPR { $$ = percent_expr($2);        }
         | exp '@' exp        { $$ = at_expr($1, $3); }
-        | '(' exp ')'        { $$ = $2;         }
+        | '(' exp ')'        { $$ = parathetical_expr($2);         }
 ;
 %%
 
@@ -67,11 +69,11 @@ yyerror (s)  /* Called by yyparse on error */
     //Otherwise we have a "syntax error"
     if(strstr(s, "undefined") != NULL)
     {
-        printf("lexical error\n");
+        printf("line %d lexical error\n", current_line_number);
     }
     else
     {
-        printf("syntax error\n");
+        printf("line %d syntax error\n", current_line_number);
     }
 #endif
 }
@@ -79,6 +81,18 @@ yyerror (s)  /* Called by yyparse on error */
 main ()
 {
   yyparse ();
+}
+
+YYSTYPE parse_complete(YYSTYPE const result)
+{
+    printf ("result: %d\n", result);
+    current_line_number++;
+}
+
+YYSTYPE parathetical_expr(YYSTYPE const a)
+{
+    printf("( %d )\n", a);
+    return a;
 }
 
 YYSTYPE percent_expr(YYSTYPE const a)
