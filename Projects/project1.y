@@ -22,7 +22,7 @@ input:    /* empty string */
 ;
 
 line:     '\n'
-        | exp '\n'  { printf ("\t%d\n", $1); }
+        | exp '\n'  { printf ("result: %d\n", $1); }
 ;
 
 exp:      NUM                { $$ = $1;         }
