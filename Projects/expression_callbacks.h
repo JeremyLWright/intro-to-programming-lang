@@ -40,6 +40,10 @@ struct at_node : public operator_node {
     YYSTYPE evaluate();
 };
 
+struct number_node : public exp_node {
+    number_node(exp_node* r);
+};
+
 extern int current_line_number;
 extern exp_node *root;
 

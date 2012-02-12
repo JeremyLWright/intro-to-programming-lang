@@ -14,17 +14,23 @@ int yylex();
 
 %}
 
+%union {
+    exp_node* expnode;
+    int num;
+}
+
 /* BISON Declarations */
 
-%token NUM
+%token <expnode> NUM
 %left '&'
 %left PERCENT_EXPR     /* unary % percent_expr function */
 %right '@'
+%type <expnode> input
+%type <expnode> exp
 
 /* Grammar follows */
 %%
-input:    /* empty string */
-        | input line {root = $$}
+input: line {$$ = new exp_node($1); root = $$;}
 ;
 
 line:     '\n'
@@ -32,7 +38,7 @@ line:     '\n'
         | error '\n' { yyerrok } /* continue parsing after an error */
 ;
 
-exp:      NUM                { $$ = $1;         }
+exp:      NUM                { $$ = new number_node($1);         }
         | exp '&' exp        { $$ = new ampr_node($1, $3);    }
         | '%' exp  %prec PERCENT_EXPR { $$ = new percent_node($2);        }
         | exp '@' exp        { $$ = new at_node($1, $3); }
