@@ -6,9 +6,16 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "expression_callbacks.h"
+
+using namespace std;
+
+exp_node* root;
+int yylex();
+
 %}
 
 /* BISON Declarations */
+
 %token NUM
 %left '&'
 %left PERCENT_EXPR     /* unary % percent_expr function */
@@ -17,7 +24,7 @@
 /* Grammar follows */
 %%
 input:    /* empty string */
-        | input line
+        | input line {root = $$}
 ;
 
 line:     '\n'
@@ -26,16 +33,16 @@ line:     '\n'
 ;
 
 exp:      NUM                { $$ = $1;         }
-        | exp '&' exp        { $$ = ampr_expr($1, $3);    }
-        | '%' exp  %prec PERCENT_EXPR { $$ = percent_expr($2);        }
-        | exp '@' exp        { $$ = at_expr($1, $3); }
-        | '(' exp ')'        { $$ = parathetical_expr($2);         }
+        | exp '&' exp        { $$ = new ampr_node($1, $3);    }
+        | '%' exp  %prec PERCENT_EXPR { $$ = new percent_node($2);        }
+        | exp '@' exp        { $$ = new at_node($1, $3); }
+        | '(' exp ')'        { $$ = $2        }
 ;
 %%
 
 /* Additional C Code */
 
-yylex ()
+int yylex ()
 {
   int c;
 
