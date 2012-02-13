@@ -1,17 +1,17 @@
-all: project1.tab.o expression_callbacks.o
-	gcc  project1.tab.o expression_callbacks.o -lm -o algcalc
+CC = g++
+CCFLAGS= -O2
+YACC= bison 
+YFLAGS= -d -t
 
-project1.tab.o: project1.tab.c
-	gcc project1.tab.c -c
+a.out: ast_parser.tab.o ast_parser.o
+	${CC} ${CCFLAGS} ast_parser.tab.o ast_parser.o -o a.out
 
-project1.tab.c: project1.y
-	bison project1.y
+ast_parser.o: ast_parser.cpp ast_parser.h
+	${CC} ${CCFLAGS} -c ast_parser.cpp
 
-expression_callbacks.o: expression_callbacks.cpp expression_callbacks.h
-	g++ expression_callbacks.cpp -c
+ast_parser.tab.o: ast_parser.ypp
+	${YACC} ${YFLAGS} ast_parser.ypp
+	${CC} ${CCFLAGS} ast_parser.tab.cpp -c 
 
 clean:
-	rm -rf *.o
-
-
-
+	rm -f ast_parser.tab.* *.o ast_parser
