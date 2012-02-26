@@ -11,6 +11,7 @@
 #include <list>
 #include "ast_parser.h"
 #include <cstring>
+#include <cstdio>
 
 using namespace std;
 
@@ -96,13 +97,6 @@ int yylex ()
     return c;                                
 }
 
-
-int main()
-{
-    yyparse(); //Just run the parser. The Parser drives the whole program
-    //The example test files have 1 empty newline at the very end of the file.
-    cout << endl; // :-(
-}
 
 /* Called by yyparse on error */
 void yyerror (char* s)  
