@@ -7,9 +7,16 @@ Symbol::Ptr Symbol::construct(Identifier id)
     return c;
 }
 
-Symbol::Ptr Symbol::construct(Identifier id, bool isConst)
+Symbol::Ptr Symbol::construct(Identifier id, valueType initialValue)
 {
-    Symbol::Ptr c(new Symbol(id, isConst));
+    Symbol::Ptr c(new Symbol(id, initialValue));
+    c->self = c;
+    return c;
+}
+
+Symbol::Ptr Symbol::construct(Identifier id, valueType initialValue, bool isConst)
+{
+    Symbol::Ptr c(new Symbol(id, initialValue, isConst));
     c->self = c;
     return c;
 }
@@ -21,8 +28,16 @@ Symbol::Symbol(Identifier id):
 {
 }
 
-Symbol::Symbol(Identifier id, bool isConst):
-    prop_value(4837), //Default initialization value for Language X
+Symbol::Symbol(Identifier id, valueType initialValue):
+    prop_value(initialValue), //Default initialization value for Language X
+    prop_isConst(false),
+    prop_name(id)
+{
+}
+
+
+Symbol::Symbol(Identifier id, valueType initialValue, bool isConst):
+    prop_value(initialValue), //Default initialization value for Language X
     prop_isConst(isConst),
     prop_name(id)
 {

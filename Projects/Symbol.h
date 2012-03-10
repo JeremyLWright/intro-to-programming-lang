@@ -26,7 +26,8 @@ public:
     typedef uint32_t valueType;
     
     static Symbol::Ptr construct(Identifier Id);
-    static Symbol::Ptr construct(Identifier Id, bool isConst);
+    static Symbol::Ptr construct(Identifier Id, valueType initialValue);
+    static Symbol::Ptr construct(Identifier Id, valueType initialValue, bool isConst);
     virtual ~Symbol();
     Identifier GetName() const;
     valueType GetValue() const;
@@ -34,7 +35,8 @@ public:
     void SetValue(valueType const value);
 private:
     Symbol(Identifier Id);
-    Symbol(Identifier Id, bool isConst);
+    Symbol(Identifier Id, valueType initialValue);
+    Symbol(Identifier Id, valueType initialValue, bool isConst);
     Identifier const id;
     Symbol::WeakPtr self;
 
