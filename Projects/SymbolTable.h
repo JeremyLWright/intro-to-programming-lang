@@ -31,6 +31,7 @@ public:
     void ExitScope(); 
     // Add a Symbol to the current scope
     void AddSymbol(Symbol::Identifier const & s);
+    void AddSymbol(Symbol::Identifier const & s, Symbol::valueType v);
     Symbol::Ptr GetSymbol(Symbol::Identifier const & s) const;
 private:
     struct Scope
