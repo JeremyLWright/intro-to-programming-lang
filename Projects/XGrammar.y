@@ -10,8 +10,8 @@ extern "C"
 {
 int yylex();
 void yyerror (char* s);
+extern int yylineno;
 }
-
 
 %}
 
@@ -22,7 +22,7 @@ void yyerror (char* s);
 }
 
 %token <s> TIDENTIFIER TNUMBER
-%token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP KW_CONST KW_VAR COMMA
+%token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
 %type<placeholder> ConstantDeclaration Program Block Declaration
 
 %start Program
@@ -30,15 +30,56 @@ void yyerror (char* s);
 %%
 Program : Block{ $$ = 1; cout << "Program" << endl;}
 
-Block : Declaration | Block Declaration{ $$ = 1; cout << "Block" << endl;}
+Block : BlockDeclaration | BlockStatement { $$ = 1; cout << "Block" << endl;}
+
+BlockStatement: /* Epsilon */
+             | BlockStatement Statement
+
+BlockDeclaration: /* Epsilon */
+                 | BlockDeclaration Declaration
 
 Declaration : VariableDeclaration | ConstantDeclaration { $$ = 1; cout << "Declaration" << endl;}
 
-VariableDeclaration : KW_VAR VariableDeclaration
+VariableDeclaration : VAR TIDENTIFIER {  cout << *$2 <<"<-- Single Variable "  <<  endl}
                     | COMMA TIDENTIFIER {  cout << *$2 <<"<-- Part of List Variable "  <<  endl}
-                    | TIDENTIFIER {  cout << *$1 <<"<-- Single Variable "  <<  endl}
 
-ConstantDeclaration : KW_CONST TIDENTIFIER TEQ TNUMBER {  $$ = 1; cout << "const " << *$2 << " is " << *$4  << endl;}
+ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { cout << "const " << *$2 << " is " << *$4  << endl;}
+
+Statement : Assignment 
+            | PrintStmt 
+            | IfStmt 
+            | DoStmt
+
+Assignment : TIDENTIFIER TASSIGN Expression
+
+PrintStmt : PRINT Expression
+
+IfStmt : IF Condition END
+
+DoStmt : LOOP Condition END
+
+Condition : /* Epsilon */
+            | Condition DO Expression TARROW Block END
+
+Expression : Simple ExpressionOptional
+
+ExpressionOptional : /* Epsilon */
+                   | RELOP Simple
+
+Simple : UniTerm 
+       | TAMPOP UniTerm
+
+UniTerm : TPEROP UniTerm 
+        | Term
+
+Term : Factor TermOptional
+
+TermOptional : /* Epsilon */
+             | TATOP Term
+
+Factor : LPAREN Expression RPAREN
+        | TNUMBER
+        | TIDENTIFIER
 %%
 
 /* Called by yyparse on error */
@@ -61,5 +102,6 @@ void yyerror (char* s)
 }
 
 int main() {
+    yylineno = 1;
   return yyparse();
 }
