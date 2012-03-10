@@ -16,6 +16,7 @@ extern "C"
 
 %%
 
+","                     return TOKEN(COMMA);
 [ \t\n]     ; //Ignore White Space
 "var"                   return TOKEN(KW_VAR);
 "const"                 return TOKEN(KW_CONST);
@@ -36,9 +37,9 @@ extern "C"
 "%"                     return TOKEN(TPEROP);
 "@"                     return TOKEN(TATOP);
 ":="                    return TOKEN(TASSIGN);
-"/="                    return TOKEN(TNEQ);
-"<="                    return TOKEN(TLEQ);
-">="                    return TOKEN(TGEQ);
+"/="                    return TOKEN(RELOP);
+"<="                    return TOKEN(RELOP);
+">="                    return TOKEN(RELOP);
 "="                     return TOKEN(TEQ);
 . cout << "line " << 0 << ": lexical error - illegal tokens" << endl;
 %%

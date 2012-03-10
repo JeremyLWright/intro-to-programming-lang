@@ -2,3 +2,4 @@ syntax: glob
 *.pdf
 *.log
 *.aux
+Projects/b

@@ -1,4 +1,5 @@
 %{
+#define YYDEBUG 1
 #include <string>
 #include <iostream>
 #include <cstdlib>
@@ -17,15 +18,27 @@ void yyerror (char* s);
 %union {
     int token;
     string* s;
+    int placeholder;
 }
 
 %token <s> TIDENTIFIER TNUMBER
-%token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TNEQ TLEQ TGEQ KW_CONST KW_VAR TEQ
+%token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP KW_CONST KW_VAR COMMA
+%type<placeholder> ConstantDeclaration Program Block Declaration
 
-%start ConstantDeclaration
+%start Program
 
 %%
-ConstantDeclaration : KW_CONST TIDENTIFIER TEQ TNUMBER {  cout << "const " << *$2 << " is " << *$4  << endl};
+Program : Block{ $$ = 1; cout << "Program" << endl;}
+
+Block : Declaration | Block Declaration{ $$ = 1; cout << "Block" << endl;}
+
+Declaration : VariableDeclaration | ConstantDeclaration { $$ = 1; cout << "Declaration" << endl;}
+
+VariableDeclaration : KW_VAR VariableDeclaration
+                    | COMMA TIDENTIFIER {  cout << *$2 <<"<-- Part of List Variable "  <<  endl}
+                    | TIDENTIFIER {  cout << *$1 <<"<-- Single Variable "  <<  endl}
+
+ConstantDeclaration : KW_CONST TIDENTIFIER TEQ TNUMBER {  $$ = 1; cout << "const " << *$2 << " is " << *$4  << endl;}
 %%
 
 /* Called by yyparse on error */
