@@ -1,4 +1,4 @@
-%option noyywrap debug
+%option noyywrap debug yylineno
 
 %{
 #include <iostream>
@@ -15,14 +15,20 @@ extern "C"
 %}
 
 %%
-
+"("                     return TOKEN(LPAREN);
+")"                     return TOKEN(RPAREN);
 ","                     return TOKEN(COMMA);
 [ \t\n]     ; //Ignore White Space
-"var"                   return TOKEN(KW_VAR);
-"const"                 return TOKEN(KW_CONST);
+"var"                   return TOKEN(VAR);
+"const"                 return TOKEN(CONST);
+"print"                 return TOKEN(PRINT);
+"if"                    return TOKEN(IF);
+"do"                    return TOKEN(DO);
+"end"                   return TOKEN(END);
+"loop"                  return TOKEN(LOOP);
 [a-zA-Z_][a-zA-Z0-9_]*  {   if(yyleng > 20) 
                             {
-                                cout << "line " << 0 << ": lexical error - exceeding maximum token length" << endl;
+                                cout << "line " << yylineno << ": lexical error - exceeding maximum token length" << endl;
                                 yylval.s = new string(yytext, 20);
                             }
                             else
