@@ -22,7 +22,7 @@ Symbol::Ptr Symbol::construct(Identifier id, valueType initialValue, bool isCons
 }
 
 Symbol::Symbol(Identifier id):
-    prop_value(4837), //Default initialization value for Language X
+    prop_value(DEFAULT_INITIAL_VALUE), //Default initialization value for Language X
     prop_isConst(false),
     prop_name(id)
 {

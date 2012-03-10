@@ -24,6 +24,7 @@ public:
     typedef std::tr1::weak_ptr<Symbol> WeakPtr;
     typedef string Identifier;
     typedef uint32_t valueType;
+    static valueType const DEFAULT_INITIAL_VALUE = 4837;
     
     static Symbol::Ptr construct(Identifier Id);
     static Symbol::Ptr construct(Identifier Id, valueType initialValue);
