@@ -23,22 +23,20 @@ extern int yylineno;
 
 %token <s> TIDENTIFIER TNUMBER
 %token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
-%type<placeholder> ConstantDeclaration Program Block Declaration
+%type<placeholder> ConstantDeclaration Program Declaration
 
 %start Program
 
 %%
-Program : Block{ $$ = 1; cout << "Program" << endl;}
+Program : Block{ cout << "Program" << endl;}
 
-Block : BlockDeclaration | BlockStatement { $$ = 1; cout << "Block" << endl;}
+Block : /* Epsilon */
+      | Block Declaration 
+      | Block Statement { cout << "Block" << endl;}
 
-BlockStatement: /* Epsilon */
-             | BlockStatement Statement
 
-BlockDeclaration: /* Epsilon */
-                 | BlockDeclaration Declaration
-
-Declaration : VariableDeclaration | ConstantDeclaration { $$ = 1; cout << "Declaration" << endl;}
+Declaration : VariableDeclaration { cout << "Variable Declaration" << endl;}
+            | ConstantDeclaration { cout << "Declaration" << endl;}
 
 VariableDeclaration : VAR TIDENTIFIER {  cout << *$2 <<"<-- Single Variable "  <<  endl}
                     | COMMA TIDENTIFIER {  cout << *$2 <<"<-- Part of List Variable "  <<  endl}
