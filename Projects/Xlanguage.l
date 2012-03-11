@@ -1,5 +1,4 @@
 %option noyywrap debug yylineno
-
 %{
 #include <iostream>
 using namespace std;

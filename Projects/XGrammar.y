@@ -64,8 +64,10 @@ Expression : Simple ExpressionOptional
 ExpressionOptional : /* Epsilon */
                    | RELOP Simple
 
-Simple : UniTerm 
-       | TAMPOP UniTerm
+Simple : UniTerm SimpleRecurse
+
+SimpleRecurse :  /* Epsilon */
+              | SimpleRecurse TAMPOP UniTerm
 
 UniTerm : TPEROP UniTerm 
         | Term
@@ -97,9 +99,4 @@ void yyerror (char* s)
         printf("line %d syntax error\n", 1);
     }
 */
-}
-
-int main() {
-    yylineno = 1;
-  return yyparse();
 }
