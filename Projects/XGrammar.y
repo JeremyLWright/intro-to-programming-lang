@@ -68,6 +68,7 @@ Expression : Simple ExpressionOptional
 
 ExpressionOptional : /* Epsilon */
                    | RELOP Simple
+                   | TEQ Simple
 
 Simple : UniTerm SimpleRecurse
 

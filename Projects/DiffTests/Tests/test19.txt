@@ -7,7 +7,7 @@
 		loop
 		  do 23 >= i ->
 		  	var N
-		  	N := 1 / = 2
+		  	
 		 	N := 1 /= 2  
 		  end
 		end
