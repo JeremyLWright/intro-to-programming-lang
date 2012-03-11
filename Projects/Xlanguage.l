@@ -27,7 +27,7 @@ extern "C"
 "do"                    return TOKEN(DO);
 "end"                   return TOKEN(END);
 "loop"                  return TOKEN(LOOP);
-[a-zA-Z_][a-zA-Z0-9_]*  {   if(yyleng > 20) 
+[a-zA-Z_][a-zA-Z_]*  {   if(yyleng > 20) 
                             {
                                 cout << "line " << yylineno << ": lexical error - exceeding maximum token length" << endl;
                                 yylval.s = new string(yytext, 20);
