@@ -1,0 +1,12 @@
+CC=g++
+CFLAGS = -O2
+OBJS = Symbol.o main.o SymbolTable.o XLexer.o XParser.o
+
+%.o: %.cpp
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+a.out: $(OBJS)
+	$(CC) -o $@ $^ $(CFLAGS)
+
+clean:
+	rm -rf *.o a.out

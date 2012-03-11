@@ -30,3 +30,4 @@ if(GTEST_FOUND)
     ADD_TEST(GTest ${CMAKE_CURRENT_BINARY_DIR}/test_parser --gtest_output=xml)
 
 endif()
+
