@@ -18,6 +18,7 @@ void checkAssignment(string const & s);
 void checkDeclaration(string const & s);
 void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst);
 void checkExistance(string const & s); 
+int variableDeclaredLine = 0;
 %}
 
 %union {
@@ -53,7 +54,7 @@ Statement : Assignment
             | IfStmt 
             | DoStmt
 
-Assignment : TIDENTIFIER TASSIGN { checkAssignment(*$1) } Expression
+Assignment : TIDENTIFIER {variableDeclaredLine = yylineno} TASSIGN { checkAssignment(*$1) } Expression
 PrintStmt : PRINT Expression 
 
 IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
@@ -96,7 +97,7 @@ void checkAssignment(string const & s)
 {
     if(programSymbolTable->GetSymbol(s)->GetConstness())
     {
-        cout << "line " << (yylineno) << ": static semantic error - invalid assignment" << endl;
+        cout << "line " << (variableDeclaredLine) << ": static semantic error - invalid assignment" << endl;
     }
 }
 
@@ -113,6 +114,7 @@ void checkDeclaration(string const & s)
     catch (IdentifierUndefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+        exit(1);
     }   
 }
 
@@ -129,6 +131,7 @@ void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst)
     catch (IdentifierUndefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+        exit(1);
     }   
 
 }
@@ -142,5 +145,6 @@ void checkExistance(string const & s)
     catch(IdentifierUndefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+        exit(1); 
     }
 }
