@@ -14,9 +14,10 @@ void yyerror (char* s);
 extern int yylineno;
 }
 SymbolTable::Ptr programSymbolTable;
-void checkAssignment(string& s);
-void checkDeclaration(string& s);
-void checkConstDeclaration(string& s, Symbol::valueType v, bool isConst);
+void checkAssignment(string const & s);
+void checkDeclaration(string const & s);
+void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst);
+void checkExistance(string const & s); 
 %}
 
 %union {
@@ -53,7 +54,7 @@ Statement : Assignment
             | DoStmt
 
 Assignment : TIDENTIFIER TASSIGN { checkAssignment(*$1) } Expression
-PrintStmt : PRINT Expression
+PrintStmt : PRINT Expression 
 
 IfStmt : IF Condition END {programSymbolTable->ExitScope();}
 
@@ -82,7 +83,7 @@ TermOptional : /* Epsilon */
 
 Factor : LPAREN Expression RPAREN
         | TNUMBER
-        | TIDENTIFIER
+        | TIDENTIFIER { checkExistance(*$1); }
 %%
 
 /* Called by yyparse on error */
@@ -91,7 +92,7 @@ void yyerror (char* s)
     cout << "line " << yylineno << ": " << s << endl;
 }
 
-void checkAssignment(string& s)
+void checkAssignment(string const & s)
 {
     if(programSymbolTable->GetSymbol(s)->GetConstness())
     {
@@ -99,7 +100,7 @@ void checkAssignment(string& s)
     }
 }
 
-void checkDeclaration(string& s)
+void checkDeclaration(string const & s)
 {
     try 
     {
@@ -115,7 +116,7 @@ void checkDeclaration(string& s)
     }   
 }
 
-void checkConstDeclaration(string& s, Symbol::valueType v, bool isConst)
+void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst)
 {
     try 
     {
@@ -130,4 +131,16 @@ void checkConstDeclaration(string& s, Symbol::valueType v, bool isConst)
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
     }   
 
+}
+
+void checkExistance(string const & s)
+{
+    try
+    {
+        programSymbolTable->GetSymbol(s);
+    }
+    catch(IdentifierUndefined const & e)
+    {
+        cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+    }
 }
