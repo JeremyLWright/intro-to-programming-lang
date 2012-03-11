@@ -38,7 +38,20 @@ extern "C"
                             }
                             return TIDENTIFIER;
                         }
-[0-9]+                  yylval.num = atoi(yytext); return TNUMBER;
+[0-9]+                  {
+                            string* s; 
+                            if(yyleng > 20) 
+                            {
+                                cout << "line " << yylineno << ": lexical error - exceeding maximum token length" << endl;
+                                s = new string(yytext, 20);
+                            }
+                            else
+                            {
+                                s = new string(yytext, yyleng);
+                            }
+                            yylval.num = atoi(s->c_str());
+                            return TNUMBER;
+                        }
 "->"                    return TOKEN(TARROW);
 "&"                     return TOKEN(TAMPOP);
 "%"                     return TOKEN(TPEROP);

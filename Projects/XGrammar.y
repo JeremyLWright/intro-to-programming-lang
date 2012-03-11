@@ -37,8 +37,8 @@ int variableDeclaredLine = 0;
 Program : Block
 
 Block : /* Epsilon */
-      | Block Declaration 
-      | Block Statement 
+      | Block Declaration
+      | Block Statement
 
 
 Declaration : VariableDeclaration
@@ -49,10 +49,10 @@ VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
 
 ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
 
-Statement : Assignment 
-            | PrintStmt 
-            | IfStmt 
-            | DoStmt
+Statement : Assignment { programSymbolTable->EndDeclarations(); }
+            | PrintStmt  { programSymbolTable->EndDeclarations(); }
+            | IfStmt  { programSymbolTable->EndDeclarations(); }
+            | DoStmt { programSymbolTable->EndDeclarations(); }
 
 Assignment : TIDENTIFIER {variableDeclaredLine = yylineno} TASSIGN { checkAssignment(*$1) } Expression
 PrintStmt : PRINT Expression 
@@ -115,6 +115,11 @@ void checkDeclaration(string const & s)
     {
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
         exit(1);
+    }
+    catch (DeclarationAfterStatement const & e)
+    {
+        cout << "line " << yylineno << ": syntax error" << endl;
+        exit(1);
     }   
 }
 
@@ -131,6 +136,11 @@ void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst)
     catch (IdentifierUndefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+        exit(1);
+    }   
+    catch (DeclarationAfterStatement const & e)
+    {
+        cout << "line " << yylineno << ": syntax error" << endl;
         exit(1);
     }   
 
