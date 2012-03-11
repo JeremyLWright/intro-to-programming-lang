@@ -3,3 +3,4 @@ syntax: glob
 *.log
 *.aux
 Projects/b
+Projects/DiffTests/Output
