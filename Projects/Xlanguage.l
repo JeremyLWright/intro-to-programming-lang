@@ -23,10 +23,10 @@ extern "C"
 "var"                   return TOKEN(VAR);
 "const"                 return TOKEN(CONST);
 "print"                 return TOKEN(PRINT);
-"if"                    programSymbolTable->EnterScope(); return TOKEN(IF);
-"do"                    programSymbolTable->EnterScope(); return TOKEN(DO);
+"if"                    return TOKEN(IF);
+"do"                    return TOKEN(DO);
 "end"                   return TOKEN(END);
-"loop"                  programSymbolTable->EnterScope(); return TOKEN(LOOP);
+"loop"                  return TOKEN(LOOP);
 [a-zA-Z_][a-zA-Z0-9_]*  {   if(yyleng > 20) 
                             {
                                 cout << "line " << yylineno << ": lexical error - exceeding maximum token length" << endl;
