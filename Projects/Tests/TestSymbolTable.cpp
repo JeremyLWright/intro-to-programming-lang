@@ -196,20 +196,27 @@ TEST_F(SymbolTableTestFixture, DeepScopeWithMultipleAccess)
         EXPECT_EQ(3, myTable->GetSymbol("z")->GetValue());
         EXPECT_EQ(4, myTable->GetSymbol("a")->GetValue());
         EXPECT_EQ(5, myTable->GetSymbol("b")->GetValue());
-        EXPECT_THROW(myTable->GetSymbol("c")->GetValue(), runtime_error);
-        EXPECT_THROW(myTable->GetSymbol("d")->GetValue(), runtime_error);
-        EXPECT_THROW(myTable->GetSymbol("e")->GetValue(), runtime_error);
+        EXPECT_THROW(myTable->GetSymbol("c")->GetValue(), IdentifierUndefined);
+        EXPECT_THROW(myTable->GetSymbol("d")->GetValue(), IdentifierUndefined);
+        EXPECT_THROW(myTable->GetSymbol("e")->GetValue(), IdentifierUndefined);
 
     }
     myTable->ExitScope(); //Scope 1
     EXPECT_EQ(1, myTable->GetSymbol("x")->GetValue());
     EXPECT_EQ(2, myTable->GetSymbol("y")->GetValue());
     EXPECT_EQ(3, myTable->GetSymbol("z")->GetValue());
-    EXPECT_THROW(myTable->GetSymbol("a")->GetValue(), runtime_error);
-    EXPECT_THROW(myTable->GetSymbol("b")->GetValue(), runtime_error);
-    EXPECT_THROW(myTable->GetSymbol("c")->GetValue(), runtime_error);
-    EXPECT_THROW(myTable->GetSymbol("d")->GetValue(), runtime_error);
+    EXPECT_THROW(myTable->GetSymbol("a")->GetValue(), IdentifierUndefined);
+    EXPECT_THROW(myTable->GetSymbol("b")->GetValue(), IdentifierUndefined);
+    EXPECT_THROW(myTable->GetSymbol("c")->GetValue(), IdentifierUndefined);
+    EXPECT_THROW(myTable->GetSymbol("d")->GetValue(), IdentifierUndefined);
 
     //In Global Scope now...
 
+}
+
+
+TEST_F(SymbolTableTestFixture, RedefineSymbol)
+{
+    myTable->AddSymbol("y", 6);
+    EXPECT_THROW(myTable->AddSymbol("y", 8), IdentifierRedefined);
 }

@@ -20,6 +20,7 @@ extern int yylineno;
     string* s;
     int placeholder;
 }
+%error-verbose
 
 %token <s> TIDENTIFIER TNUMBER
 %token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
