@@ -15,6 +15,8 @@ extern int yylineno;
 }
 SymbolTable::Ptr programSymbolTable;
 void checkAssignment(string& s);
+void checkDeclaration(string& s);
+void checkConstDeclaration(string& s, Symbol::valueType v, bool isConst);
 %}
 
 %union {
@@ -40,10 +42,10 @@ Block : /* Epsilon */
 Declaration : VariableDeclaration
             | ConstantDeclaration 
 
-VariableDeclaration : VAR TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
-                    | COMMA TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
+VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
+                    | COMMA TIDENTIFIER {  checkDeclaration(*$2); }
 
-ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { programSymbolTable->AddSymbol(*$2, $4, true);}
+ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
 
 Statement : Assignment 
             | PrintStmt 
@@ -95,4 +97,37 @@ void checkAssignment(string& s)
     {
         cout << "line " << (yylineno) << ": static semantic error - invalid assignment" << endl;
     }
+}
+
+void checkDeclaration(string& s)
+{
+    try 
+    {
+        programSymbolTable->AddSymbol(s);  
+    } 
+    catch (IdentifierRedefined const & e)
+    {
+        cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+    }   
+    catch (IdentifierUndefined const & e)
+    {
+        cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+    }   
+}
+
+void checkConstDeclaration(string& s, Symbol::valueType v, bool isConst)
+{
+    try 
+    {
+        programSymbolTable->AddSymbol(s, v, isConst);  
+    } 
+    catch (IdentifierRedefined const & e)
+    {
+        cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+    }
+    catch (IdentifierUndefined const & e)
+    {
+        cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+    }   
+
 }
