@@ -1,0 +1,11 @@
+   const x = 1
+   var i, j
+   if
+       do
+             i > 5   ->
+            print   j
+
+      end
+
+   i := j
+

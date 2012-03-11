@@ -1,0 +1,20 @@
+
+  var N
+  var i
+  if
+	do 1 ->
+		const N = 10
+		print i
+		loop
+		  do 23 >= i ->
+		  	var N
+		  	N := 1
+		  end
+		end
+		N := i & 1
+	end
+  end
+  N := i & 1
+  print N
+                 
+

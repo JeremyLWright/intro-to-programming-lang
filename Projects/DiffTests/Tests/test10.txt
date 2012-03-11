@@ -1,0 +1,9 @@
+
+   const x = 1
+   var i, j
+   x := i & j
+   if do 1 -> print i end
+
+   print i
+
+

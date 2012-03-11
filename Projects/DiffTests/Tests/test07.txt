@@ -1,0 +1,7 @@
+var i, j, k
+var x
+var j
+
+print i & j
+print z
+

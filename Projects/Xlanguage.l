@@ -25,7 +25,7 @@ extern "C"
 "print"                 return TOKEN(PRINT);
 "if"                    programSymbolTable->EnterScope(); return TOKEN(IF);
 "do"                    programSymbolTable->EnterScope(); return TOKEN(DO);
-"end"                   programSymbolTable->ExitScope(); return TOKEN(END);
+"end"                   return TOKEN(END);
 "loop"                  programSymbolTable->EnterScope(); return TOKEN(LOOP);
 [a-zA-Z_][a-zA-Z0-9_]*  {   if(yyleng > 20) 
                             {
@@ -50,7 +50,7 @@ extern "C"
 ">"                    return TOKEN(RELOP);
 "<"                    return TOKEN(RELOP);
 "="                     return TOKEN(TEQ);
-. cout << "line " << 0 << ": lexical error - illegal tokens" << endl;
+. cout << "line " << yylineno << ": lexical error - illegal tokens" << endl;
 %%
 /*
 int main()

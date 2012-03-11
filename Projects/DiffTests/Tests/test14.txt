@@ -1,0 +1,15 @@
+
+  var i,j,k
+  const f = 2	
+  			
+  loop do f >= i @ (3000 & k) & % f ->	
+  	 var z
+     print (i & (j @ 2) & 2 & z)
+     end			
+  end
+  
+  j := 
+       f @ 
+           z
+  
+
