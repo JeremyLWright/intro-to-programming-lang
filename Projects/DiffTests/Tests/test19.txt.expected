@@ -1,0 +1,5 @@
+line 10: lexical error - illegal tokens
+line 26: lexical error - illegal tokens
+line 27: static semantic error - invalid assignment
+line 34: lexical error - illegal tokens
+line 34: static semantic error - identifier undefined

@@ -1,0 +1,38 @@
+
+  var N
+  var i
+  if
+	do 1 ->
+		print i
+		loop
+		  do 23 >= i ->
+		  	var N
+		  	N := 1 / = 2
+		 	N := 1 /= 2  
+		  end
+		end
+		N := i & 1
+	end
+  end
+
+  print N
+                 
+  if
+	do 2 ->
+		var j
+		print N & 2
+		loop
+		  do i /= j ->
+		  	const N = 5*
+		  	N := 1
+		  end
+		  do i = j ->
+		  	const X = 33
+		  	N := 1 & X
+		  end
+		end
+		N := i & j @ ?X?
+		print **j**
+	end
+  end
+

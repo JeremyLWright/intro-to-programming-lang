@@ -12,9 +12,9 @@ extern "C"
 int yylex();
 void yyerror (char* s);
 extern int yylineno;
-SymbolTable::Ptr programSymbolTable;
 }
-
+SymbolTable::Ptr programSymbolTable;
+void checkAssignment(string& s);
 %}
 
 %union {
@@ -22,7 +22,6 @@ SymbolTable::Ptr programSymbolTable;
     string* s;
     int num;
 }
-%error-verbose
 
 %token <s> TIDENTIFIER
 %token <num> TNUMBER
@@ -31,15 +30,15 @@ SymbolTable::Ptr programSymbolTable;
 %start Program
 
 %%
-Program : Block{ cout << "Program" << endl;}
+Program : Block
 
 Block : /* Epsilon */
       | Block Declaration 
-      | Block Statement { cout << "Block" << endl;}
+      | Block Statement 
 
 
-Declaration : VariableDeclaration { cout << "Variable Declaration" << endl;}
-            | ConstantDeclaration { cout << "Declaration" << endl;}
+Declaration : VariableDeclaration
+            | ConstantDeclaration 
 
 VariableDeclaration : VAR TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
                     | COMMA TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
@@ -51,13 +50,12 @@ Statement : Assignment
             | IfStmt 
             | DoStmt
 
-Assignment : TIDENTIFIER TASSIGN Expression
-
+Assignment : TIDENTIFIER TASSIGN { checkAssignment(*$1) } Expression
 PrintStmt : PRINT Expression
 
-IfStmt : IF Condition END
+IfStmt : IF Condition END {programSymbolTable->ExitScope();}
 
-DoStmt : LOOP Condition END
+DoStmt : LOOP Condition END {programSymbolTable->ExitScope();} 
 
 Condition : /* Epsilon */
             | Condition DO Expression TARROW Block END
@@ -88,18 +86,13 @@ Factor : LPAREN Expression RPAREN
 /* Called by yyparse on error */
 void yyerror (char* s)  
 {
-    //Look through the error message from bison, if it says $undefined then we have a "lexical error"
-    //if it says $undefined then we have a "lexical error"
-    //Otherwise we have a "syntax error"
-    cout << s << endl;
-/*
-    if(strstr(s, "undefined") != NULL)
+    cout << "line " << yylineno << ": " << s << endl;
+}
+
+void checkAssignment(string& s)
+{
+    if(programSymbolTable->GetSymbol(s)->GetConstness())
     {
-        printf("line %d lexical error\n", 1);
+        cout << "line " << (yylineno) << ": static semantic error - invalid assignment" << endl;
     }
-    else
-    {
-        printf("line %d syntax error\n", 1);
-    }
-*/
 }

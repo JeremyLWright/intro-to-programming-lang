@@ -220,3 +220,26 @@ TEST_F(SymbolTableTestFixture, RedefineSymbol)
     myTable->AddSymbol("y", 6);
     EXPECT_THROW(myTable->AddSymbol("y", 8), IdentifierRedefined);
 }
+
+TEST_F(SymbolTableTestFixture, ConstMaskNonConst)
+{
+    myTable->AddSymbol("N");
+    EXPECT_FALSE(myTable->GetSymbol("N")->GetConstness());
+    myTable->EnterScope();
+    myTable->AddSymbol("N", 5, true);
+    EXPECT_TRUE(myTable->GetSymbol("N")->GetConstness());
+    myTable->ExitScope();
+
+}
+
+
+TEST_F(SymbolTableTestFixture, NonConstMaskConst)
+{
+    myTable->AddSymbol("N", 5, true);
+    EXPECT_TRUE(myTable->GetSymbol("N")->GetConstness());
+    myTable->EnterScope();
+    myTable->AddSymbol("N", 5);
+    EXPECT_FALSE(myTable->GetSymbol("N")->GetConstness());
+    myTable->ExitScope();
+
+}
