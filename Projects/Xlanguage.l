@@ -36,7 +36,7 @@ extern "C"
                             }
                             return TIDENTIFIER;
                         }
-[0-9]+                  SAVE_TOKEN; return TNUMBER;
+[0-9]+                  yylval.num = atoi(yytext); return TNUMBER;
 "->"                    return TOKEN(TARROW);
 "&"                     return TOKEN(TAMPOP);
 "%"                     return TOKEN(TPEROP);

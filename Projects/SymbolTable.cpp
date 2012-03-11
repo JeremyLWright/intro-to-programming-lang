@@ -48,8 +48,13 @@ void SymbolTable::AddSymbol(Symbol::Identifier const & s)
 
 void SymbolTable::AddSymbol(Symbol::Identifier const & s, Symbol::valueType v)
 {
+    AddSymbol(s, v, false);
+}
+
+void SymbolTable::AddSymbol(Symbol::Identifier const & s, Symbol::valueType v, bool isConst)
+{
     Scope::Ptr currentScope = ScopeTable.top();
-    Symbol::Ptr newSymbol = Symbol::construct(s, v);
+    Symbol::Ptr newSymbol = Symbol::construct(s, v, isConst);
     if(currentScope->SymbolDB.find(s) == currentScope->SymbolDB.end())
     {
         currentScope->SymbolDB[s] = newSymbol;
