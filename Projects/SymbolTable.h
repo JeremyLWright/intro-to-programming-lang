@@ -15,6 +15,7 @@
 #include <vector>
 #include <stack>
 #include "Symbol.h"
+#include "SymbolTableExceptions.h"
 
 using namespace std;
 

@@ -43,17 +43,25 @@ void SymbolTable::ExitScope()
 
 void SymbolTable::AddSymbol(Symbol::Identifier const & s)
 {
-    Scope::Ptr currentScope = ScopeTable.top();
-    Symbol::Ptr newSymbol = Symbol::construct(s);
-    currentScope->SymbolDB[s] = newSymbol;
+    AddSymbol(s, Symbol::DEFAULT_INITIAL_VALUE);
 }
 
 void SymbolTable::AddSymbol(Symbol::Identifier const & s, Symbol::valueType v)
 {
     Scope::Ptr currentScope = ScopeTable.top();
     Symbol::Ptr newSymbol = Symbol::construct(s, v);
-    currentScope->SymbolDB[s] = newSymbol;
+    if(currentScope->SymbolDB.find(s) == currentScope->SymbolDB.end())
+    {
+        currentScope->SymbolDB[s] = newSymbol;
+    }
+    else
+    {
+        stringstream ss;
+        ss << "Symbol " << s << " Already Defined." << endl;
+        throw IdentifierRedefined(ss.str());
+    }
 }
+
 
 Symbol::Ptr SymbolTable::GetSymbol(Symbol::Identifier const & s) const
 {
@@ -84,7 +92,7 @@ Symbol::Ptr SymbolTable::Scope::SearchScope(Symbol::Identifier const & s, Scope:
     //We've reach the global scope, and cannot find the value, give up.
     stringstream ss;
     ss << "Cannot find value: " << s;
-    throw runtime_error(ss.str());
+    throw IdentifierUndefined(ss.str());
 }
 // ---------------------------------------------------------
 //          Scope::Scope()
