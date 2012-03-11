@@ -1,4 +1,4 @@
-%option noyywrap debug yylineno
+%option noyywrap yylineno
 %{
 #include <iostream>
 using namespace std;
@@ -45,6 +45,8 @@ extern "C"
 "/="                    return TOKEN(RELOP);
 "<="                    return TOKEN(RELOP);
 ">="                    return TOKEN(RELOP);
+">"                    return TOKEN(RELOP);
+"<"                    return TOKEN(RELOP);
 "="                     return TOKEN(TEQ);
 . cout << "line " << 0 << ": lexical error - illegal tokens" << endl;
 %%
