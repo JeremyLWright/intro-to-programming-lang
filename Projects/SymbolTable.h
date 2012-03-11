@@ -33,6 +33,7 @@ public:
     // Add a Symbol to the current scope
     void AddSymbol(Symbol::Identifier const & s);
     void AddSymbol(Symbol::Identifier const & s, Symbol::valueType v);
+    void AddSymbol(Symbol::Identifier const & s, Symbol::valueType v, bool isConst);
     Symbol::Ptr GetSymbol(Symbol::Identifier const & s) const;
 private:
     struct Scope

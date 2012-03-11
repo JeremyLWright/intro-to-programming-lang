@@ -6,11 +6,15 @@
 using namespace std;
 #include "XParser.hpp"
 #include "XLexer.hpp"
+#include "SymbolTable.h"
+
+extern SymbolTable::Ptr programSymbolTable;
 
 class ParserTestFixture : public ::testing::Test {
     protected:
         virtual void SetUp()
         {
+            programSymbolTable = SymbolTable::construct();
         }
 
         virtual void TearDown()

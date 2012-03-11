@@ -5,12 +5,14 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include "SymbolTable.h"
 using namespace std;
 extern "C" 
 {
 int yylex();
 void yyerror (char* s);
 extern int yylineno;
+SymbolTable::Ptr programSymbolTable;
 }
 
 %}
@@ -18,13 +20,13 @@ extern int yylineno;
 %union {
     int token;
     string* s;
-    int placeholder;
+    int num;
 }
 %error-verbose
 
-%token <s> TIDENTIFIER TNUMBER
+%token <s> TIDENTIFIER
+%token <num> TNUMBER
 %token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
-%type<placeholder> ConstantDeclaration Program Declaration
 
 %start Program
 
@@ -39,10 +41,10 @@ Block : /* Epsilon */
 Declaration : VariableDeclaration { cout << "Variable Declaration" << endl;}
             | ConstantDeclaration { cout << "Declaration" << endl;}
 
-VariableDeclaration : VAR TIDENTIFIER {  cout << *$2 <<"<-- Single Variable "  <<  endl}
-                    | COMMA TIDENTIFIER {  cout << *$2 <<"<-- Part of List Variable "  <<  endl}
+VariableDeclaration : VAR TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
+                    | COMMA TIDENTIFIER {  programSymbolTable->AddSymbol(*$2); }
 
-ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { cout << "const " << *$2 << " is " << *$4  << endl;}
+ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { programSymbolTable->AddSymbol(*$2, $4, true);}
 
 Statement : Assignment 
             | PrintStmt 
