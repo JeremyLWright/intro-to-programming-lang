@@ -27,6 +27,11 @@ void SymbolTable::EnterScope()
     ScopeTable.push(newScope);
 }
 
+void SymbolTable::EndDeclarations()
+{
+    ScopeTable.top()->DeclarationsComplete = true;   
+}
+
 void SymbolTable::ExitScope()
 {
     // Only pop the scope, if there is at least 1 scope in the table, 
@@ -54,6 +59,11 @@ void SymbolTable::AddSymbol(Symbol::Identifier const & s, Symbol::valueType v)
 void SymbolTable::AddSymbol(Symbol::Identifier const & s, Symbol::valueType v, bool isConst)
 {
     Scope::Ptr currentScope = ScopeTable.top();
+    if(currentScope->DeclarationsComplete)
+    {
+        throw DeclarationAfterStatement("Cannot start a declaration block.");
+    }
+
     Symbol::Ptr newSymbol = Symbol::construct(s, v, isConst);
     if(currentScope->SymbolDB.find(s) == currentScope->SymbolDB.end())
     {
@@ -111,7 +121,8 @@ SymbolTable::Scope::Ptr SymbolTable::Scope::construct()
     return c;
 }
 
-SymbolTable::Scope::Scope()
+SymbolTable::Scope::Scope():
+    DeclarationsComplete(false)
 {
 }
 

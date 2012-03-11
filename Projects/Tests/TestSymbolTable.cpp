@@ -243,3 +243,20 @@ TEST_F(SymbolTableTestFixture, NonConstMaskConst)
     myTable->ExitScope();
 
 }
+
+TEST_F(SymbolTableTestFixture, MixStatementsDeclarations)
+{
+    myTable->AddSymbol("N");
+    myTable->EndDeclarations();
+    EXPECT_THROW(myTable->AddSymbol("G"), DeclarationAfterStatement);
+}
+
+TEST_F(SymbolTableTestFixture, MixStatementsDeclarations2)
+{
+    myTable->AddSymbol("N");
+    myTable->EndDeclarations();
+    myTable->EnterScope();
+    EXPECT_NO_THROW(myTable->AddSymbol("G"));
+    myTable->ExitScope();
+    EXPECT_THROW(myTable->AddSymbol("H"), DeclarationAfterStatement);
+}

@@ -23,4 +23,9 @@ class IdentifierRedefined : public std::runtime_error {
         IdentifierRedefined(std::string m):std::runtime_error(m){}
 };
 
+class DeclarationAfterStatement  : public std::runtime_error {
+    public:
+        DeclarationAfterStatement(std::string m):std::runtime_error(m){}
+};
+
 #endif /* end of include guard: _SYMBOLTABLEEXCEPTIONS */

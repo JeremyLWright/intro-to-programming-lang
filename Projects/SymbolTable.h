@@ -34,6 +34,8 @@ public:
     void AddSymbol(Symbol::Identifier const & s);
     void AddSymbol(Symbol::Identifier const & s, Symbol::valueType v);
     void AddSymbol(Symbol::Identifier const & s, Symbol::valueType v, bool isConst);
+
+    void EndDeclarations();
     Symbol::Ptr GetSymbol(Symbol::Identifier const & s) const;
 private:
     struct Scope
@@ -47,6 +49,7 @@ private:
             Scope::WeakPtr parent;
             Scope::WeakPtr self;
             static Symbol::Ptr SearchScope(Symbol::Identifier const & s, Scope::Ptr aScope);
+            bool DeclarationsComplete;
         private:
             Scope();
 
