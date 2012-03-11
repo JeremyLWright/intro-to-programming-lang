@@ -56,12 +56,12 @@ Statement : Assignment
 Assignment : TIDENTIFIER TASSIGN { checkAssignment(*$1) } Expression
 PrintStmt : PRINT Expression 
 
-IfStmt : IF Condition END {programSymbolTable->ExitScope();}
+IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
 
-DoStmt : LOOP Condition END {programSymbolTable->ExitScope();} 
+DoStmt : LOOP {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();} 
 
 Condition : /* Epsilon */
-            | Condition DO Expression TARROW Block END
+            | Condition DO {programSymbolTable->EnterScope();} Expression TARROW Block END  {programSymbolTable->ExitScope();} 
 
 Expression : Simple ExpressionOptional
 
