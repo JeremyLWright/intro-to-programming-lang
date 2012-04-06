@@ -1,0 +1,10 @@
+  const x = 1
+  var i, j
+  i := i & j & 1040 @ (((100)))
+  if
+     do i > 20 & %%j -> var k  print  k & (((i)))  end
+     do i > 30 & %%j -> var k  print  k & ((j))  end
+     do i > 40 & %%j -> var k  print  k & (x)  end
+  end
+
+
