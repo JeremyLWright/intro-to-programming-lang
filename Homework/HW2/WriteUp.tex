@@ -1,0 +1,121 @@
+\documentclass{article}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{syntax}
+\usepackage{synttree}
+\usepackage[left=0.75in, top=1in, right=0.75in, bottom=1in]{geometry}
+\pagestyle{plain}
+\begin{document}
+    \rhead{Jeremy Wright\\CSE 340: Homework 1}
+    \thispagestyle{fancy}
+
+    % The list environment is just to get some vertical spacing
+    \list{} \item \endlist
+
+    % Let the homework begin!
+    \section*{6.5}
+    \subsection*{a}
+    All numbers written in scientific notation.
+    \subsection*{b}
+    ( [a-z] | \_)+([0-9]*|[a-z]*|\_)*
+    \section*{6.10}
+    \begin{grammar}
+        <A> $\rightarrow$ 
+        <translation-unit> $\rightarrow$ external-declaration \{ translation-unit
+        external-declaration \} \\
+        <external-declaration> $\rightarrow$ function-definition | declaration
+        \\
+        <functional-definition> $\rightarrow$ declaration-specifiers declarator
+        declaration-list compound-statement 
+        \alt declaration-specifiers declarator compound-statement
+        \alt declarator \{ declaration-list compound-statement
+        | compound-statement \} \\
+        <declaration> $\rightarrow$ declaration-specifiers `;'
+        | declaration-specifiers init-declarator-list `;' \\
+        <init-declarator-list> $\rightarrow$ init-declarator
+        | init-declarator-list `,' init-declarator \\
+        <init-declarator> $\rightarrow$ declarator | declarator `=' initializer
+        \\
+        <declarator> $\rightarrow$ pointer direct-declarator | direct-declarator
+        \\
+        <pointer> $\rightarrow$ `*' type-qualifier-list pointer | `*'
+        type-qualifier-list | `*' pointer | `*' \\
+        <direct-declarator> $\rightarrow$ ID 
+        \alt `(' declarator ')' | \{ direct\_declarator 
+        \alt `[' constant\_expression `]'
+        \alt  `(' parameter\_type\_list `)'
+        \alt `(' identifier\_list `)'
+        \alt  `(' `)' \} \\
+
+    \end{grammar}
+    \section*{6.12}
+    \section*{6.13}
+    \subsection*{b}
+    \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ term \{ + term \} \\
+        <term> $\rightarrow$ factor \{ * factor \} \\
+        <factor> $\rightarrow$ ( expr ) | number  |  number\\
+        <number> $\rightarrow$ `-' digit \{ digit \} \\
+        <digit> $\rightarrow$ [0-9] \\
+    \end{grammar}
+
+    \subsection*{c}
+     \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ term \{ + term \} \\
+        <term> $\rightarrow$ factor \{ * factor \} \\
+        <factor> $\rightarrow$ ( expr ) | number  | `-' number\\
+        <number> $\rightarrow$ digit \{ digit \} \\
+        <digit> $\rightarrow$ [0-9] \\
+    \end{grammar}
+
+
+    \section*{6.14}
+    \subsection*{e}
+    \synttree[ expr
+            [ term
+            [ factor
+            [ (expr) [.x (] [expr + term [ term [ factor [ number [digit [.x 2]]]]]
+ [.x + ]
+                                                   [ factor
+                                        [ (expr) [.x ( ]
+                                        [ expr + term [.x 3 + ]
+                                        [ factor
+                                        [ (expr) [.x (] [expr + term
+                                        [ term [ factor [number [digit [.x 4 +]]]]
+                                         ]
+                                         [factor [ number [digit [.x 5]]]]
+                                        ] [.x )]
+                                        ]]]]]] [.x ) ]]]]]
+
+
+    \section*{6.42}
+    \subsection*{a}
+    \begin{grammar}
+        <A> $\rightarrow$
+        <expr> $\rightarrow$ ( list ) | a \\
+        <list> $\rightarrow$ list, {expr} \\
+    \end{grammar}
+
+    \subsection*{b}
+    \synttree[ expr 
+                [ ( list ) 
+                [ expr 
+                [ (list) 
+                [ list, expr
+                [ list, expr
+                [ expr [.x a]] [list, expr
+                                [expr [.x a]]
+                                [expr [.x a] 
+                                [ (list)
+                                [ expr [.x a]]]]]]]]]]]
+
+    \section*{6.46}
+    \section*{6.48}
+
+\end{document}

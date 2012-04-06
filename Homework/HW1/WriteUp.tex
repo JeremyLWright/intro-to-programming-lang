@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage[left=0.75in, top=1in, right=0.75in, bottom=1in]{geometry}
+\pagestyle{plain}
+\begin{document}
+    \rhead{Jeremy Wright\\CSE 340: Homework 1}
+    \thispagestyle{fancy}
+
+    % The list environment is just to get some vertical spacing
+    \list{} \item \endlist
+
+    % Let the homework begin!
+    \section*{Question 1}
+    See IntWithGcdRecursive.java
+    \section*{Question 2}
+    See IntWithGcdRecursiveOperator.java\\
+    In a strongly typed language this isn't a technical problem, but rather
+    a idiomatic one. Operators such as gcd should only function on similar
+    types. Semantically, {\bf int} and {\bf IntWithGcdRecursive} is not
+    a similar type. Therefore it makes more sense to create a new operator that
+    accepts only a reference of the same type. I choose the Op- prefix used in
+    the D Programming language to denote that this is an operator, and not
+    a standard method. 
+
+    Lastly, the input parameter should be denoted as final since an operator
+    should not modify its operands.
+    \section*{Question 3}
+
+    \subsection*{Objected-Oriented}
+    \subsubsection*{Pro}
+    Object-Orientation describes systems in terms of the nouns, or entities that
+    perform work. For large system, this allows very powerful abstractions.
+    Conversely in a language like C, writing strictly bounded interfaces to
+    provide similar abstractions is a matter of disciple rather than language
+    enforcements. 
+    \subsubsection*{Con}
+    Object-Orientation can result in very messy code. Where one creates too many
+    abstractions. With so many layers of indirection, maintenance is difficult,
+    and performance is atrocious. The joke made about C++ is:
+    \begin{quote}
+        You accidentally create a dozen instances of yourself and shoot them all
+        in the foot. Providing emergency medical care is impossible since you
+        can't tell which are bitwise copies and which are just pointing at
+        others and saying, ``That's me over there.''
+    \end{quote}
+    
+    \subsection*{Functional}
+    \subsubsection*{Pro}
+    Functional programs attempt the leverage the mathematical properties of
+    a system. Modeling a system entirely in mathematics allows certain
+    properties such as correctness, and halting to be analysed. The problem may
+    not also be solvable, but the immutable behaviors of mathematics provides
+    a much strong set of tools, than weaker languages. 
+
+    \subsubsection*{Con}
+    Historically, performance and isolation has been the bane of functional
+    programming languages. Functional languages until recently, were intrepreted
+    rather than compiled resulting in poor runtime performance.
+
+    Secondly, and rather as a result of their poor adoption, functional
+    languages lacked integration with other systems.  Lisp is a great example of
+    this; until the recent advent of {\bf Clojure} Lisp lacked integration with
+    non-lisp system. However Clojure's tight integration with the JVM makes this
+    a non-issue. Clojure also improves the past performance issues. Clojure is
+    intimately design is concurrency, and immutable data structures. This,
+    combined with the advanced JIT capability of the JVM make Functional
+    programs a serious contender. 
+    
+    \subsection*{Logic}
+    \subsubsection*{Pro}
+    Logic Programming can reduce a complex system into a declaration of rules.
+    These rules act as constraints which the language engine uses to compute
+    a solution. This is much simpler on the part of the programmer, since one
+    doesn't need to be a programmer at all to constrain a system.
+    \subsubsection*{Con}
+    Logic Programming attempts to abstract the how to do something in favor of
+    the what. Spreadsheets are an example of this. However sometimes, the
+    libraries, or computation engine of the language is not sufficient to
+    compute a solution efficiently, or even compute a solution at all. In these
+    cases the programmer has to work {\emph against} the very tools that are
+    supposed to help him.
+\end{document}
