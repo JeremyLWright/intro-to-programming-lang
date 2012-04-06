@@ -1,0 +1,9 @@
+
+  var   aVeryLongLongIdentifierName
+
+  print aVeryLongLongIdentifierNameThatIsTheSame
+
+  print aVeryLongLongIdentif
+
+  print aVeryLongLongIDENTIF
+

@@ -1,0 +1,10 @@
+
+  const N = 100
+  var j
+  var anotherVeryLongIdentifierName
+  print $j
+  j := %5
+  j := j @ N &
+
+  end
+

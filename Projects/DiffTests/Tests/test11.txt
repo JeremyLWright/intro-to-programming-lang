@@ -1,0 +1,9 @@
+var i, j, k
+const M = 2
+if do 1 -> 
+     var i, j, M
+     const M = 2
+     print i
+   end
+end
+

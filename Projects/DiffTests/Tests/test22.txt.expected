@@ -1,0 +1,3 @@
+line 2: lexical error - exceeding maximum token length
+line 4: lexical error - exceeding maximum token length
+line 8: static semantic error - identifier undefined
