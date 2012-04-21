@@ -1,0 +1,13 @@
+
+  const D = 27
+  var x
+  x := D @ D
+  
+  loop 
+       do x >= 5 ->
+          print %x & 77
+          x := x @ D
+       end
+  end
+
+

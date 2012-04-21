@@ -1,0 +1,24 @@
+
+ var a, b
+ 
+ if do a /= b ->
+       var a
+       a := 4
+       if do 1 ->
+             print a
+          end
+       end
+    end
+    do %a /= %b ->
+       var a
+       a := 5
+       if do 1 ->
+             print a
+          end
+       end
+    end
+ end
+ 
+ print a
+    
+    

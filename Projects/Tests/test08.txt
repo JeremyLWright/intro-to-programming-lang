@@ -1,0 +1,13 @@
+
+ var x, y, z
+ 
+ x := y @ z
+ 
+ y := x @ z
+ 
+ z := x @ y
+ 
+ print x
+ print y
+ print z
+ 

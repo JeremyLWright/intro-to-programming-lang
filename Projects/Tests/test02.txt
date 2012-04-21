@@ -1,0 +1,11 @@
+   var i, j
+   i := 3
+   j := 5
+   print i @ j
+   
+   loop do i /= 1 ->
+          i := 14 & 5 @ i
+          print i
+        end
+   end
+

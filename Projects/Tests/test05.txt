@@ -1,0 +1,23 @@
+
+     const n = 55
+     var x
+     x := 17
+     
+     if do 1 > 2 ->
+            x := 140
+            print x
+            print n
+        end
+        do %3 /= 4 ->
+            print x
+            print n
+        end
+        do x <= 20 ->
+            var n
+            n := 43
+            print x
+            print n
+        end
+     end
+     
+     
