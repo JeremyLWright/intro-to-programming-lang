@@ -1,0 +1,9 @@
+
+ var i
+ 
+ print i
+ 
+ i := 100
+ 
+ print i
+

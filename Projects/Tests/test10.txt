@@ -1,0 +1,14 @@
+
+  const D = 4837
+  var x
+  x := x @ D
+  
+  loop 
+       do x <= 30 ->
+          print x
+          x := x @ D
+       end
+  end
+ 
+  print %x
+ 

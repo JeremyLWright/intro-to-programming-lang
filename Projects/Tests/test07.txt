@@ -1,0 +1,11 @@
+
+ const X = 4
+ var Y, Z
+ Y := 5
+ Z := 6
+ 
+ print %(X @ Y & Z)
+ 
+ print X @ Y & Z
+ 
+ 
