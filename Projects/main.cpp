@@ -1,5 +1,6 @@
 using namespace std;
 #include <string>
+#include "ASTVisitor.hpp"
 #include "XParser.hpp"
 #include "XLexer.hpp"
 #include "SymbolTable.h"
@@ -10,6 +11,8 @@ extern "C"
 {
 void yyerror (char* s);
 }
+
+
 
 int main(int argc, char* argv[]) {
     programSymbolTable = SymbolTable::construct();

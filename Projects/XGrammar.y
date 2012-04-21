@@ -6,13 +6,14 @@
 #include <cstring>
 #include <cstdio>
 #include "SymbolTable.h"
+#include "ASTVisitor.hpp"
 using namespace std;
 extern "C" 
 {
 int yylex();
 void yyerror (char* s);
-extern int yylineno;
 }
+extern int yylineno;
 SymbolTable::Ptr programSymbolTable;
 void checkAssignment(string const & s);
 void checkDeclaration(string const & s);
@@ -25,11 +26,24 @@ int variableDeclaredLine = 0;
     int token;
     string* s;
     int num;
+
+    /* AST Symbols */
+    Factor *factor_t;
+    Expression *expression_t;
+    Assignment *assignment_t;
 }
 
 %token <s> TIDENTIFIER
 %token <num> TNUMBER
-%token <token> TARROW TAMPOP TPEROP TATOP TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
+%token <token> TARROW TASSIGN TEQ RELOP CONST VAR COMMA PRINT IF DO END LOOP LPAREN RPAREN
+%right <token> TATOP
+%left <token> TAMPOP TPEROP
+
+/* AST Symbols */
+%type <factor_t> Factor;
+%type <expression_t> Expression;
+%type <assignment_t> Assignment;
+%type <expression_t> Simple UniTerm Term;
 
 %start Program
 
@@ -54,7 +68,8 @@ Statement : Assignment { programSymbolTable->EndDeclarations(); }
             | IfStmt  { programSymbolTable->EndDeclarations(); }
             | DoStmt { programSymbolTable->EndDeclarations(); }
 
-Assignment : TIDENTIFIER {variableDeclaredLine = yylineno} TASSIGN { checkAssignment(*$1) } Expression
+Assignment : TIDENTIFIER {variableDeclaredLine = yylineno;} TASSIGN Expression { checkAssignment(*$1); $$ = new Assignment( $3 ); } 
+
 PrintStmt : PRINT Expression 
 
 IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
@@ -70,22 +85,30 @@ ExpressionOptional : /* Epsilon */
                    | RELOP Simple
                    | TEQ Simple
 
-Simple : UniTerm SimpleRecurse
+Simple : UniTerm 
+       | UniTerm TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
+/*
+SimpleRecurse :  /* Epsilon * /
+              | SimpleRecurse TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
+*/
+UniTerm : TPEROP UniTerm { $$  = new PercentExpression($2); }
+        | Term 
 
-SimpleRecurse :  /* Epsilon */
-              | SimpleRecurse TAMPOP UniTerm
+Term : Factor 
+     | Factor TATOP Term {$$ = new AtExpression($2); }
 
-UniTerm : TPEROP UniTerm 
-        | Term
+/*
+TermOptional : /* Epsilon * /
+             | TATOP Term {$$ = new AtExpression($2); }
+*/
 
-Term : Factor TermOptional
-
-TermOptional : /* Epsilon */
-             | TATOP Term
-
-Factor : LPAREN Expression RPAREN
-        | TNUMBER
-        | TIDENTIFIER { checkExistance(*$1); }
+Factor : LPAREN Expression RPAREN { $$ = $2; }
+        | TNUMBER { $$ = new Factor($1); }
+        | TIDENTIFIER { 
+            checkExistance(*$1); 
+            $$ = new Factor(programSymbolTable->GetSymbol(*$1));
+            cout << $$->ToString() << endl;
+             }
 %%
 
 /* Called by yyparse on error */
