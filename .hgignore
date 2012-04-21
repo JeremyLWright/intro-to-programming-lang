@@ -2,5 +2,5 @@ syntax: glob
 *.pdf
 *.log
 *.aux
-Projects/b
+Projects/build
 Projects/DiffTests/Output

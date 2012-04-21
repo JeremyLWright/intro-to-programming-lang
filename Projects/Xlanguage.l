@@ -2,6 +2,7 @@
 %{
 #include <iostream>
 using namespace std;
+#include "ASTVisitor.hpp"
 #include "XParser.hpp"
 #include "SymbolTable.h"
 extern SymbolTable::Ptr programSymbolTable;
