@@ -56,7 +56,7 @@ Program : Block { $$ = new Program(); cout << $$->ToString();
                 i != StatementList.end();
                 ++i)
             {
-                cout << (*i)->ToString();
+                (*i)->Execute();
             }
         }
 
@@ -73,8 +73,8 @@ VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
 
 ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
 
-Statement : Assignment { cout << "Statement::Assignment::" << $1->ToString() << endl; }
-	| PrintStmt { /*cout << "Statement:PrintStmt::" << $1->ToString() <<endl;*/ } 
+Statement : Assignment
+	| PrintStmt
 
 Assignment : TIDENTIFIER TASSIGN Expression { Symbol::WeakPtr s = programSymbolTable->GetSymbol(*$1); $$ = new Assignment(s, $3 ); } 
 
