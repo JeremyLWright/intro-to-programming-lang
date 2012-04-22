@@ -64,9 +64,9 @@ ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2,
 Statement : Assignment { programSymbolTable->EndDeclarations(); }
 	| PrintStmt  { programSymbolTable->EndDeclarations(); }
 
-Assignment : TIDENTIFIER {variableDeclaredLine = yylineno;} TASSIGN Expression { checkAssignment(*$1); cout << $3 << endl;/*$$ = new Assignment( $3 );*/ } 
+Assignment : TIDENTIFIER TASSIGN Expression { Symbol::WeakPtr s = programSymbolTable->GetSymbol(*$1); $$ = new Assignment(s, $3 ); } 
 
-PrintStmt : PRINT Expression { cout << $2->Execute(); }
+PrintStmt : PRINT Expression { $2->Print(); }
 
 Expression : Simple
            | Simple RELOP Simple { $$ = new Comparison($1, $3, $2); }
