@@ -11,7 +11,6 @@
 #include <iostream>
 #include <SymbolTable.h>
 #include <sstream>
-#include "math_expressions.h"
 using namespace std;
 
 extern int yylineno;
@@ -68,6 +67,8 @@ struct Expression : public ASTNode {
     {
         return "Expression:: ";  
     }
+    virtual int Execute() = 0;
+    Symbol::WeakPtr currentValue;
 };
 
 struct Assignment : public Statement {
@@ -90,7 +91,7 @@ struct PrintStmt : public Statement {
         return "PrintStmt:: ";  
     }
 };
-
+#if 0
 struct IfStmt : public Statement {
     virtual string ToString()
     {
@@ -112,19 +113,70 @@ struct Condition : public ASTNode {
         return "Condition:: ";  
     }
 };
-
-struct Simple : public Expression {
+#endif
+struct PercentExpression : public Expression {
+    PercentExpression(Expression *L):
+        exp(L) {}
+    virtual ~PercentExpression();
     virtual string ToString()
     {
         return "SimpleExpression:: ";  
     }
+    int Execute();
+    protected:
+        Expression *exp;
 };
 
+struct OperatorExpression : public Expression {
+    OperatorExpression(Expression *L, Expression *R):
+        left(L), right(R) {}
+    protected:
+        Expression *left;
+        Expression *right;
+};
+
+struct AmpersandExpression : public OperatorExpression {
+    AmpersandExpression(Expression *L, Expression* R):
+        OperatorExpression(L, R) {}
+    virtual ~AmpersandExpression();
+    virtual string ToString()
+    {
+        return "SimpleExpression:: ";  
+    }
+    int Execute();
+};
+
+struct AtExpression : public OperatorExpression {
+    AtExpression(Expression *L, Expression* R):
+        OperatorExpression(L, R) {}
+    virtual ~AtExpression();
+    virtual string ToString()
+    {
+        return "SimpleExpression:: ";  
+    }
+    int Execute();
+};
+/*
 struct UniTerm : public Expression {
+    UniTerm(Expression *L):
+        exp(L) {}
+
     virtual string ToString()
     {
         return "UniTerm:: ";  
     }
+};
+*/
+
+struct Comparison : public OperatorExpression {
+    Comparison(Expression* L, Expression* R, int compOp):
+        OperatorExpression(L, R),
+        _compOp(compOp)
+    {
+    }
+    virtual ~Comparison();
+    int Execute();
+    int _compOp;
 };
 
 struct Term : public Expression {
@@ -167,6 +219,8 @@ struct Factor : public Expression {
         }
         return ss.str();  
     }
+
+    int Execute(){}
 
     int _value;
     Symbol::WeakPtr _identifier;
