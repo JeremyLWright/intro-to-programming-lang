@@ -15,17 +15,22 @@ using namespace std;
 
 extern int yylineno;
 
-struct ASTNode {
-    public: 
-        virtual string ToString() = 0;
-};
+struct Program {
+    void Execute()
+    {
 
-struct Program : public ASTNode {
+    }
     virtual string ToString()
     {
         return "Program:: ";  
     }
 };
+
+struct ASTNode {
+    public: 
+        virtual string ToString() = 0;
+};
+
 
 struct Block : public ASTNode {
     virtual string ToString()
@@ -98,10 +103,16 @@ struct Assignment : public Statement {
 };
 
 struct PrintStmt : public Statement {
+    PrintStmt(Expression* rhs):
+        _rhs(rhs)
+    {
+    }
+
     virtual string ToString()
     {
         return "PrintStmt:: ";  
     }
+    Expression* _rhs;
 };
 #if 0
 struct IfStmt : public Statement {
