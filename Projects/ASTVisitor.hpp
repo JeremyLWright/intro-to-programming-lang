@@ -68,14 +68,25 @@ struct Expression : public ASTNode {
         return "Expression:: ";  
     }
     virtual int Execute() = 0;
-    Symbol::WeakPtr currentValue;
+    virtual void Print() = 0;
+    protected:
+    int currentValue;
+    virtual void PrintIndentation(int depth=0)
+    {
+        for(int i = 0; i < depth; ++i)
+            cout << "   "; //Example files show 3 spaces per indentation.
+    }
+
+
 };
 
 struct Assignment : public Statement {
 
-    Assignment(Expression* rhs):
-        _rhs(rhs)
+    Assignment(Symbol::WeakPtr id, Expression* rhs):
+        _rhs(rhs),
+        _identifier(id)
     {
+        cout << "Creating Assignment to: " << _identifier.lock()->GetName() << endl;
     }
 
     virtual string ToString()
@@ -83,6 +94,7 @@ struct Assignment : public Statement {
         return "Assignment:: ";  
     }
     Expression* _rhs;
+    Symbol::WeakPtr _identifier;
 };
 
 struct PrintStmt : public Statement {
@@ -122,7 +134,8 @@ struct PercentExpression : public Expression {
     {
         return "SimpleExpression:: ";  
     }
-    int Execute();
+    virtual int Execute();
+    virtual void Print();
     protected:
         Expression *exp;
 };
@@ -143,7 +156,8 @@ struct AmpersandExpression : public OperatorExpression {
     {
         return "SimpleExpression:: ";  
     }
-    int Execute();
+    virtual void Print();
+    virtual int Execute();
 };
 
 struct AtExpression : public OperatorExpression {
@@ -154,7 +168,8 @@ struct AtExpression : public OperatorExpression {
     {
         return "SimpleExpression:: ";  
     }
-    int Execute();
+    virtual void Print();
+    virtual int Execute();
 };
 /*
 struct UniTerm : public Expression {
@@ -175,7 +190,8 @@ struct Comparison : public OperatorExpression {
     {
     }
     virtual ~Comparison();
-    int Execute();
+    virtual int Execute();
+    virtual void Print();
     int _compOp;
 };
 
@@ -189,14 +205,16 @@ struct Term : public Expression {
 struct Factor : public Expression {
     Factor(int value):
         _value(value),
-        _lineno(yylineno)
+        _lineno(yylineno),
+        _isLiteralValue(true)
     {
     }
 
     Factor(Symbol::WeakPtr identifier):
         _identifier(identifier),
         _value(-1),
-        _lineno(yylineno)
+        _lineno(yylineno),
+        _isLiteralValue(false)
     {
     }
 
@@ -206,7 +224,7 @@ struct Factor : public Expression {
 
         ss << "line " << _lineno << ": " << "Factor::";
 
-        if(_value < 0)
+        if(_isLiteralValue == false)
         {
             if(Symbol::Ptr i = _identifier.lock())
             {
@@ -220,8 +238,25 @@ struct Factor : public Expression {
         return ss.str();  
     }
 
-    int Execute(){}
+    virtual int Execute()
+    {
+        if(_isLiteralValue == false)
+        {
+            if(Symbol::Ptr s = _identifier.lock())
+            {
+                _value = s->GetValue();
+            }
+        }
 
+        return _value;
+    }
+
+    virtual void Print()
+    {
+        cout << this->ToString();
+    }
+
+    bool const _isLiteralValue;
     int _value;
     Symbol::WeakPtr _identifier;
     int const _lineno; 
