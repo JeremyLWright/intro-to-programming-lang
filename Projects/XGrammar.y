@@ -20,6 +20,8 @@ void checkDeclaration(string const & s);
 void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst);
 void checkExistance(string const & s); 
 int variableDeclaredLine = 0;
+typedef vector<Statement*> StatementList_t;
+vector<Statement*> StatementList;
 %}
 
 %union {
@@ -31,6 +33,8 @@ int variableDeclaredLine = 0;
     Factor *factor_t;
     Expression *expression_t;
     Assignment *assignment_t;
+    Statement *statement_t;
+    Program *program_t;
 }
 
 %token <s> TIDENTIFIER
@@ -40,17 +44,25 @@ int variableDeclaredLine = 0;
 %left <token> TAMPOP TPEROP
 
 /* AST Symbols */
-%type <assignment_t> Assignment;
+%type <statement_t> Statement Assignment PrintStmt;
 %type <expression_t> Factor Expression Simple UniTerm Term;
+%type <program_t> Program;
 
 %start Program
 
 %%
-Program : Block
+Program : Block { $$ = new Program(); cout << $$->ToString(); 
+        for(StatementList_t::iterator i = StatementList.begin();
+                i != StatementList.end();
+                ++i)
+            {
+                cout << (*i)->ToString();
+            }
+        }
 
 Block : /* Epsilon */
       | Block Declaration
-      | Block Statement
+      | Block Statement { StatementList.push_back($2); cout << "Adding Statement" << endl; }
 
 
 Declaration : VariableDeclaration
@@ -61,12 +73,12 @@ VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
 
 ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
 
-Statement : Assignment { programSymbolTable->EndDeclarations(); }
-	| PrintStmt  { programSymbolTable->EndDeclarations(); }
+Statement : Assignment { cout << "Statement::Assignment::" << $1->ToString() << endl; }
+	| PrintStmt { /*cout << "Statement:PrintStmt::" << $1->ToString() <<endl;*/ } 
 
 Assignment : TIDENTIFIER TASSIGN Expression { Symbol::WeakPtr s = programSymbolTable->GetSymbol(*$1); $$ = new Assignment(s, $3 ); } 
 
-PrintStmt : PRINT Expression { $2->Print(); }
+PrintStmt : PRINT Expression { $$ = new PrintStmt($2); }
 
 Expression : Simple
            | Simple RELOP Simple { $$ = new Comparison($1, $3, $2); }
