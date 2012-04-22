@@ -21,7 +21,10 @@ void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst);
 void checkExistance(string const & s); 
 int variableDeclaredLine = 0;
 typedef vector<Statement*> StatementList_t;
-vector<Statement*> StatementList;
+StatementList_t StatementList;
+typedef vector<Declaration*> DeclarationList_t;
+DeclarationList_t DeclarationList;
+
 %}
 
 %union {
@@ -34,6 +37,7 @@ vector<Statement*> StatementList;
     Expression *expression_t;
     Assignment *assignment_t;
     Statement *statement_t;
+    Declaration *declaration_t;
     Program *program_t;
 }
 
@@ -44,14 +48,22 @@ vector<Statement*> StatementList;
 %left <token> TAMPOP TPEROP
 
 /* AST Symbols */
-%type <statement_t> Statement Assignment PrintStmt;
+%type <statement_t> Statement Assignment PrintStmt IfStmt DoStmt;
 %type <expression_t> Factor Expression Simple UniTerm Term;
 %type <program_t> Program;
+%type <declaration_t> Declaration VariableDeclaration ConstantDeclaration
 
 %start Program
 
 %%
 Program : Block { $$ = new Program(); cout << $$->ToString(); 
+        for(DeclarationList_t::iterator i = DeclarationList.begin();
+                i != DeclarationList.end();
+                ++i)
+            {
+                (*i)->Execute();
+            }
+
         for(StatementList_t::iterator i = StatementList.begin();
                 i != StatementList.end();
                 ++i)
@@ -61,24 +73,24 @@ Program : Block { $$ = new Program(); cout << $$->ToString();
         }
 
 Block : /* Epsilon */
-      | Block Declaration
+      | Block Declaration { DeclarationList.push_back($2); cout << "Adding Declaration" << endl; }
       | Block Statement { StatementList.push_back($2); cout << "Adding Statement" << endl; }
 
 
 Declaration : VariableDeclaration
-            | ConstantDeclaration 
+            | ConstantDeclaration  
 
-VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
-                    | COMMA TIDENTIFIER {  checkDeclaration(*$2); }
+VariableDeclaration : VAR TIDENTIFIER {  $$ = new VariableDeclaration(*$2); }
+                    | COMMA TIDENTIFIER {  $$ = new VariableDeclaration(*$2); }
 
-ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
+ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { $$ = new ConstantDeclaration(*$2, $4);}
 
 Statement : Assignment
 	| PrintStmt
     | IfStmt
     | DoStmt
 
-Assignment : TIDENTIFIER TASSIGN Expression { Symbol::WeakPtr s = programSymbolTable->GetSymbol(*$1); $$ = new Assignment(s, $3 ); } 
+Assignment : TIDENTIFIER TASSIGN Expression { $$ = new Assignment(*$1, $3 ); } 
 
 PrintStmt : PRINT Expression { $$ = new PrintStmt($2); }
 
@@ -106,9 +118,7 @@ Term : Factor
 Factor : LPAREN Expression RPAREN { $$ = $2; }
         | TNUMBER { $$ = new Factor($1); }
         | TIDENTIFIER { 
-            checkExistance(*$1); 
-            $$ = new Factor(programSymbolTable->GetSymbol(*$1));
-            cout << $$->ToString() << endl;
+            $$ = new Factor(*$1);
              }
 %%
 

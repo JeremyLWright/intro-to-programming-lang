@@ -11,10 +11,11 @@
 #include <iostream>
 #include <SymbolTable.h>
 #include <sstream>
+#include <cstdlib>
 using namespace std;
 
 extern int yylineno;
-
+extern SymbolTable::Ptr programSymbolTable;
 struct Program {
     void Execute()
     {
@@ -40,6 +41,7 @@ struct Block : public ASTNode {
 };
 
 struct Declaration : public ASTNode {
+    virtual void Execute() = 0;
     virtual string ToString()
     {
         return "Declaration:: ";  
@@ -47,17 +49,77 @@ struct Declaration : public ASTNode {
 };
 
 struct VariableDeclaration : public Declaration {
+    VariableDeclaration(string name) :
+        _name(name)
+    {
+    }
+
+    virtual void Execute()
+    {
+        try
+        {
+            programSymbolTable->AddSymbol(_name);
+        } 
+        catch (IdentifierRedefined const & e)
+        {
+            cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+        }   
+        catch (IdentifierUndefined const & e)
+        {
+            cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+            exit(1);
+        }
+        catch (DeclarationAfterStatement const & e)
+        {
+            cout << "We're here" << endl;
+            cout << "line " << yylineno << ": syntax error" << endl;
+            exit(1);
+        }   
+
+    }
     virtual string ToString()
     {
         return "VariableDeclaration:: ";  
     }
+    string const _name;
 };
 
 struct ConstantDeclaration : public Declaration {
+    ConstantDeclaration(string name, int value):
+        _value(value),
+        _name(name)
+    {
+    }
+
+    virtual void Execute()
+    {
+        try
+        {
+            programSymbolTable->AddSymbol(_name, _value, true);
+        } 
+        catch (IdentifierRedefined const & e)
+        {
+            cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+        }
+        catch (IdentifierUndefined const & e)
+        {
+            cout << "line " << yylineno << ": static semantic error - identifier undefined" << endl;
+            exit(1);
+        }   
+        catch (DeclarationAfterStatement const & e)
+        {
+            cout << "line " << yylineno << ": syntax error" << endl;
+            exit(1);
+        }   
+
+    }
+
     virtual string ToString()
     {
         return "ConstantDeclaration:: ";  
     }
+    int const _value;
+    string const _name;
 };
 
 struct Statement : public ASTNode {
@@ -89,11 +151,11 @@ struct Expression : public ASTNode {
 
 struct Assignment : public Statement {
 
-    Assignment(Symbol::WeakPtr id, Expression* rhs):
+    Assignment(string id, Expression* rhs):
         _rhs(rhs),
         _identifier(id)
     {
-        cout << "Creating Assignment to: " << _identifier.lock()->GetName() << endl;
+        cout << "Creating Assignment to: " << _identifier << endl;
     }
 
     virtual string ToString()
@@ -103,11 +165,11 @@ struct Assignment : public Statement {
 
     virtual void Execute()
     {
-        _identifier.lock()->SetValue(_rhs->Execute());
+        programSymbolTable->GetSymbol(_identifier)->SetValue(_rhs->Execute());
     }
 
     Expression* _rhs;
-    Symbol::WeakPtr _identifier;
+    string const _identifier;
 };
 
 struct PrintStmt : public Statement {
@@ -137,7 +199,7 @@ struct IfStmt : public Statement {
 };
 
 struct DoStmt : public Statement {
-    
+
     virtual string ToString()
     {
         return "DoStmt:: ";  
@@ -162,15 +224,15 @@ struct PercentExpression : public Expression {
     virtual int Execute();
     virtual void Print();
     protected:
-        Expression *exp;
+    Expression *exp;
 };
 
 struct OperatorExpression : public Expression {
     OperatorExpression(Expression *L, Expression *R):
         left(L), right(R) {}
     protected:
-        Expression *left;
-        Expression *right;
+    Expression *left;
+    Expression *right;
 };
 
 struct AmpersandExpression : public OperatorExpression {
@@ -197,16 +259,16 @@ struct AtExpression : public OperatorExpression {
     virtual int Execute();
 };
 /*
-struct UniTerm : public Expression {
-    UniTerm(Expression *L):
-        exp(L) {}
+   struct UniTerm : public Expression {
+   UniTerm(Expression *L):
+   exp(L) {}
 
-    virtual string ToString()
-    {
-        return "UniTerm:: ";  
-    }
-};
-*/
+   virtual string ToString()
+   {
+   return "UniTerm:: ";  
+   }
+   };
+   */
 
 struct Comparison : public OperatorExpression {
     Comparison(Expression* L, Expression* R, int compOp):
@@ -235,7 +297,7 @@ struct Factor : public Expression {
     {
     }
 
-    Factor(Symbol::WeakPtr identifier):
+    Factor(string identifier):
         _identifier(identifier),
         _value(-1),
         _lineno(yylineno),
@@ -245,6 +307,7 @@ struct Factor : public Expression {
 
     virtual string ToString()
     {
+#if 0
         stringstream ss;
 
         ss << "line " << _lineno << ": " << "Factor::";
@@ -260,17 +323,16 @@ struct Factor : public Expression {
         {
             ss << "Value::" << _value;
         }
-        return ss.str();  
+#endif
+        return "Factor::";  
     }
 
     virtual int Execute()
     {
         if(_isLiteralValue == false)
         {
-            if(Symbol::Ptr s = _identifier.lock())
-            {
-                _value = s->GetValue();
-            }
+            Symbol::Ptr s = programSymbolTable->GetSymbol(_identifier);
+            _value = s->GetValue();
         }
 
         return _value;
@@ -281,10 +343,10 @@ struct Factor : public Expression {
         cout << this->ToString();
     }
 
-    bool const _isLiteralValue;
+    string _identifier;
     int _value;
-    Symbol::WeakPtr _identifier;
     int const _lineno; 
+    bool const _isLiteralValue;
 
 
 };

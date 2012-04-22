@@ -110,3 +110,7 @@ void Comparison::Print()
    cout << " " << _compOp << " ";
    right->Print();
 }
+
+/* Declarations */
+
+
