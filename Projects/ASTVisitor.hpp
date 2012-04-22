@@ -65,6 +65,8 @@ struct Statement : public ASTNode {
     {
         return "Statement:: ";  
     }
+
+    virtual void Execute() = 0; 
 };
 
 struct Expression : public ASTNode {
@@ -98,6 +100,12 @@ struct Assignment : public Statement {
     {
         return "Assignment:: ";  
     }
+
+    virtual void Execute()
+    {
+        _identifier.lock()->SetValue(_rhs->Execute());
+    }
+
     Expression* _rhs;
     Symbol::WeakPtr _identifier;
 };
@@ -112,6 +120,12 @@ struct PrintStmt : public Statement {
     {
         return "PrintStmt:: ";  
     }
+
+    virtual void Execute()
+    {
+        cout << _rhs->Execute() << endl;
+    }
+
     Expression* _rhs;
 };
 #if 0
