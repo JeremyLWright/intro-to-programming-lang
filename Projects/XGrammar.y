@@ -75,17 +75,27 @@ ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2,
 
 Statement : Assignment
 	| PrintStmt
+    | IfStmt
+    | DoStmt
 
 Assignment : TIDENTIFIER TASSIGN Expression { Symbol::WeakPtr s = programSymbolTable->GetSymbol(*$1); $$ = new Assignment(s, $3 ); } 
 
 PrintStmt : PRINT Expression { $$ = new PrintStmt($2); }
+
+IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
+
+DoStmt : LOOP {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();} 
+
+Condition : /* Epsilon */
+            | Condition DO {programSymbolTable->EnterScope();} Expression TARROW Block END  {programSymbolTable->ExitScope();} 
+
 
 Expression : Simple
            | Simple RELOP Simple { $$ = new Comparison($1, $3, $2); }
            | Simple TEQ Simple { $$ = new Comparison($1, $3, $2); }
 
 Simple : UniTerm 
-       | UniTerm TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
+       | Simple TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
 
 UniTerm : TPEROP UniTerm { $$  = new PercentExpression($2); }
         | Term 
