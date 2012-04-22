@@ -57,6 +57,7 @@ private:
 
     SymbolTable();
     SymbolTable::WeakPtr self;
+    Scope::Ptr currentScope;
     
     stack<Scope::Ptr> ScopeTable;
 
