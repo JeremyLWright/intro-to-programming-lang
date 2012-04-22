@@ -14,7 +14,7 @@ FLEX_TARGET(XLexer Xlanguage.l ${CMAKE_CURRENT_BINARY_DIR}/XLexer.cpp
 ADD_FLEX_BISON_DEPENDENCY(XLexer XParser)
 include_directories(.)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-set(HandSources SymbolTable.cpp Symbol.cpp)
+set(HandSources SymbolTable.cpp Symbol.cpp ASTVisitor.cpp)
 set(PROJ_SOURCES  ${BISON_XParser_OUTPUTS} ${FLEX_XLexer_OUTPUTS})
 add_executable(a.out main.cpp ${PROJ_SOURCES} ${HandSources})
 target_link_libraries(a.out ${FLEX_LIBRARIES})

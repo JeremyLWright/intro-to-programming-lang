@@ -40,10 +40,8 @@ int variableDeclaredLine = 0;
 %left <token> TAMPOP TPEROP
 
 /* AST Symbols */
-%type <factor_t> Factor;
-%type <expression_t> Expression;
 %type <assignment_t> Assignment;
-%type <expression_t> Simple UniTerm Term;
+%type <expression_t> Factor Expression Simple UniTerm Term;
 
 %start Program
 
@@ -64,43 +62,24 @@ VariableDeclaration : VAR TIDENTIFIER {  checkDeclaration(*$2); }
 ConstantDeclaration : CONST TIDENTIFIER TEQ TNUMBER { checkConstDeclaration(*$2, $4, true);}
 
 Statement : Assignment { programSymbolTable->EndDeclarations(); }
-            | PrintStmt  { programSymbolTable->EndDeclarations(); }
-            | IfStmt  { programSymbolTable->EndDeclarations(); }
-            | DoStmt { programSymbolTable->EndDeclarations(); }
+	| PrintStmt  { programSymbolTable->EndDeclarations(); }
 
-Assignment : TIDENTIFIER {variableDeclaredLine = yylineno;} TASSIGN Expression { checkAssignment(*$1); $$ = new Assignment( $3 ); } 
+Assignment : TIDENTIFIER {variableDeclaredLine = yylineno;} TASSIGN Expression { checkAssignment(*$1); cout << $3 << endl;/*$$ = new Assignment( $3 );*/ } 
 
-PrintStmt : PRINT Expression 
+PrintStmt : PRINT Expression { cout << $2->Execute(); }
 
-IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
-
-DoStmt : LOOP {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();} 
-
-Condition : /* Epsilon */
-            | Condition DO {programSymbolTable->EnterScope();} Expression TARROW Block END  {programSymbolTable->ExitScope();} 
-
-Expression : Simple ExpressionOptional
-
-ExpressionOptional : /* Epsilon */
-                   | RELOP Simple
-                   | TEQ Simple
+Expression : Simple
+           | Simple RELOP Simple { $$ = new Comparison($1, $3, $2); }
+           | Simple TEQ Simple { $$ = new Comparison($1, $3, $2); }
 
 Simple : UniTerm 
        | UniTerm TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
-/*
-SimpleRecurse :  /* Epsilon * /
-              | SimpleRecurse TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
-*/
+
 UniTerm : TPEROP UniTerm { $$  = new PercentExpression($2); }
         | Term 
 
 Term : Factor 
-     | Factor TATOP Term {$$ = new AtExpression($2); }
-
-/*
-TermOptional : /* Epsilon * /
-             | TATOP Term {$$ = new AtExpression($2); }
-*/
+     | Factor TATOP Term {$$ = new AtExpression($1, $3); }
 
 Factor : LPAREN Expression RPAREN { $$ = $2; }
         | TNUMBER { $$ = new Factor($1); }
@@ -142,6 +121,7 @@ void checkDeclaration(string const & s)
     }
     catch (DeclarationAfterStatement const & e)
     {
+        cout << "We're here" << endl;
         cout << "line " << yylineno << ": syntax error" << endl;
         exit(1);
     }   
