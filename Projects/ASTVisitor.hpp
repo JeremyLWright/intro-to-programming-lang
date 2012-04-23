@@ -9,7 +9,7 @@
 #define _ASTVISITOR
 
 #include <iostream>
-#include <SymbolTable.h>
+#include "SymbolTable.h"
 #include <sstream>
 #include <cstdlib>
 using namespace std;
