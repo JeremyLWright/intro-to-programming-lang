@@ -103,7 +103,7 @@ int Comparison::Execute()
 {
     int left_value = left->Execute();
     int right_value = right->Execute();
-    cout << "Comparing " << left_value << " to " << right_value;
+//    cout << "Comparing " << left_value << " to " << right_value;
     bool returnValue = false;
     switch(_compOp)
     {
@@ -127,7 +127,7 @@ int Comparison::Execute()
             break;
     }
 
-    cout << "returning " << returnValue;
+//    cout << "returning " << returnValue;
     return returnValue;
 
 }
