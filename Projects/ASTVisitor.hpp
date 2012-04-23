@@ -190,29 +190,9 @@ struct PrintStmt : public Statement {
 
     Expression* _rhs;
 };
-#if 0
-struct IfStmt : public Statement {
-    virtual string ToString()
-    {
-        return "IfStmt:: ";  
-    }
-};
 
-struct DoStmt : public Statement {
 
-    virtual string ToString()
-    {
-        return "DoStmt:: ";  
-    }
-};
 
-struct Condition : public ASTNode {
-    virtual string ToString()
-    {
-        return "Condition:: ";  
-    }
-};
-#endif
 struct PercentExpression : public Expression {
     PercentExpression(Expression *L):
         exp(L) {}
@@ -368,6 +348,7 @@ struct Block {
 
     void Execute()
     {
+        programSymbolTable->EnterScope();
         for(DeclarationList_t::iterator i = DeclarationList.begin();
                 i != DeclarationList.end();
                 ++i)
@@ -381,6 +362,7 @@ struct Block {
         {
             (*i)->Execute();
         }
+        programSymbolTable->ExitScope();
 
     }
 };
@@ -440,7 +422,7 @@ struct Condition {
 
 
 
-struct LoopStatement : Statement {
+struct LoopStatement : public Statement {
     LoopStatement(Condition* cond):
         _cond(cond)
     {
@@ -465,4 +447,23 @@ struct LoopStatement : Statement {
     Condition* _cond;
 };
 
+struct IfStmt : public Statement {
+    IfStmt(Condition* cond):
+        _cond(cond)
+    {
+    }
+    virtual string ToString()
+    {
+        return "IfStmt:: ";  
+    }
+
+    virtual void Execute()
+    {
+        while(_cond->Execute(true) != false)
+        {
+        }
+    }
+
+    Condition* _cond;
+};
 #endif /* end of include guard: _ASTVISITOR */

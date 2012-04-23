@@ -14,7 +14,6 @@ SymbolTable::SymbolTable()
 {
     Scope::Ptr globalScope = Scope::construct();
     ScopeTable.push(globalScope);
-    currentScope = ScopeTable.top();
 }
 
 SymbolTable::~SymbolTable()
@@ -26,7 +25,6 @@ void SymbolTable::EnterScope()
     Scope::Ptr newScope = Scope::construct();
     newScope->parent = ScopeTable.top()->self; //Connect the new scope to the previous scope.
     ScopeTable.push(newScope);
-    currentScope = ScopeTable.top();
 }
 
 void SymbolTable::EndDeclarations()

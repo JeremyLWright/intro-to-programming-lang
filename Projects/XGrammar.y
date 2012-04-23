@@ -82,7 +82,7 @@ Assignment : TIDENTIFIER TASSIGN Expression { $$ = new Assignment(*$1, $3 ); }
 
 PrintStmt : PRINT Expression { $$ = new PrintStmt($2); }
 
-IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
+IfStmt : IF Condition END { $$ = new IfStmt($2); }
 
 DoStmt : LOOP Condition END { $$ = new LoopStatement($2); }
 
@@ -123,7 +123,7 @@ void checkAssignment(string const & s)
         cout << "line " << (variableDeclaredLine) << ": static semantic error - invalid assignment" << endl;
     }
 }
-
+#if 0
 void checkDeclaration(string const & s)
 {
     try 
@@ -133,6 +133,7 @@ void checkDeclaration(string const & s)
     catch (IdentifierRedefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+        exit(1);
     }   
     catch (IdentifierUndefined const & e)
     {
@@ -156,6 +157,7 @@ void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst)
     catch (IdentifierRedefined const & e)
     {
         cout << "line " << yylineno << ": static semantic error - identifier redefined" << endl;
+        exit(1);
     }
     catch (IdentifierUndefined const & e)
     {
@@ -182,3 +184,4 @@ void checkExistance(string const & s)
         exit(1); 
     }
 }
+#endif
