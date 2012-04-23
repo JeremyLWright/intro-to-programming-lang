@@ -103,30 +103,33 @@ int Comparison::Execute()
 {
     int left_value = left->Execute();
     int right_value = right->Execute();
+    cout << "Comparing " << left_value << " to " << right_value;
+    bool returnValue = false;
     switch(_compOp)
     {
         case N_EQ:
-            return left_value != right_value ? true : false;
+            left_value != right_value ? returnValue = true : returnValue = false;
+            break;
         case IS_EQ:
-            return left_value == right_value ? true : false;
+             left_value == right_value ? returnValue = true : returnValue = false;
             break;
         case LT_EQ:
-            return left_value <= right_value ? true : false;
+             left_value <= right_value ? returnValue = true : returnValue = false;
             break;
         case GT_EQ:
-            return left_value >= right_value ? true : false;
+             left_value >= right_value ? returnValue = true : returnValue = false;
             break;
         case GT:
-            return left_value > right_value ? true : false;
+             left_value > right_value ? returnValue = true : returnValue = false;
             break;
         case LT:
-            return left_value < right_value ? true : false;
-            break;
-        default:
-            throw runtime_error("Invalid Comparison Operator");
+             left_value < right_value ? returnValue = true : returnValue = false;
             break;
     }
-    return 0;
+
+    cout << "returning " << returnValue;
+    return returnValue;
+
 }
 
 void Comparison::Print()
