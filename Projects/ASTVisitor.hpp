@@ -459,9 +459,7 @@ struct IfStmt : public Statement {
 
     virtual void Execute()
     {
-        while(_cond->Execute(true) != false)
-        {
-        }
+        _cond->Execute(true);
     }
 
     Condition* _cond;
