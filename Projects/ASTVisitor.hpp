@@ -18,12 +18,14 @@ extern int yylineno;
 extern SymbolTable::Ptr programSymbolTable;
 
 enum RelationalOperator_t {
-    IS_EQ,
+    REL_OP_MIN = 4,
+    IS_EQ = REL_OP_MIN,
     N_EQ,
     LT_EQ,
     GT_EQ,
     GT,
-    LT
+    LT,
+    REL_OP_MAX = LT
 };
 
 
@@ -151,7 +153,6 @@ struct Assignment : public Statement {
         _rhs(rhs),
         _identifier(id)
     {
-        cout << "Creating Assignment to: " << _identifier << endl;
     }
 
     virtual string ToString()
@@ -161,6 +162,9 @@ struct Assignment : public Statement {
 
     virtual void Execute()
     {
+        int value = _rhs->Execute();
+        cout << "Assigning " << value << " to " << _identifier << endl;
+
         programSymbolTable->GetSymbol(_identifier)->SetValue(_rhs->Execute());
     }
 
@@ -271,6 +275,14 @@ struct Comparison : public OperatorExpression {
         OperatorExpression(L, R),
         _compOp(compOp)
     {
+
+        if(compOp < REL_OP_MIN || compOp > REL_OP_MAX)
+        {
+            stringstream ss;
+            ss << "Invalid Comparison Operator: " << _compOp <<endl;
+            ss << "Constructing on " << yylineno;
+            throw runtime_error(ss.str());
+        }
     }
     virtual ~Comparison();
     virtual int Execute();
@@ -391,18 +403,53 @@ struct Program {
 
 };
 
+typedef pair<Expression*, Block*> ConditionSet_t;
+typedef vector<ConditionSet_t> ConditionSetList_t;
+
+struct Condition {
+
+    Condition()
+    {
+    }
+    
+    virtual bool Execute(bool breakOnFirstTrue=false)
+    {
+        bool AllConditionsFalse = true;
+        for(ConditionSetList_t::iterator i = ConditionSetList.begin();
+                i != ConditionSetList.end();
+                ++i)
+        {
+            if(i->first->Execute() == true) //If the condition is true
+            {
+                i->second->Execute(); //Execute the block
+                AllConditionsFalse = false;
+                if(breakOnFirstTrue)
+                    break;
+            }
+        }
+        return AllConditionsFalse;
+    }
+
+    virtual string ToString()
+    {
+        return "ConditionStmt::";
+    }
+
+    ConditionSetList_t ConditionSetList;
+};
 
 
-#if 0
+
 struct LoopStatement : Statement {
-    LoopStatement(Condition* cond)
+    LoopStatement(Condition* cond):
+        _cond(cond)
     {
 
     }
 
     virtual void Execute()
     {
-        while(_cond->Execute() == true);
+        while(_cond->Execute() == true); //Execute until all statements are false
     }
 
     virtual string ToString()
@@ -413,21 +460,5 @@ struct LoopStatement : Statement {
 
     Condition* _cond;
 };
-
-struct ConditionStatement : Statement {
-    ConditionStatement(Expression* expr)
-    {
-    }
-    
-    virtual void Execute()
-    {
-    }
-
-    virtual string ToString()
-    {
-        return "ConditionStmt::";
-    }
-};
-#endif
 
 #endif /* end of include guard: _ASTVISITOR */

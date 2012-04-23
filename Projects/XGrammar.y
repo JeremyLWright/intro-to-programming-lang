@@ -36,7 +36,9 @@ int variableDeclaredLine = 0;
     Statement *statement_t;
     Declaration *declaration_t;
     Program *program_t;
+    LoopStatement *loopstatement_t;
     Block *block_t;
+    Condition *condition_t;
 }
 
 %token <s> TIDENTIFIER
@@ -51,6 +53,7 @@ int variableDeclaredLine = 0;
 %type <program_t> Program;
 %type <block_t> Block;
 %type <declaration_t> Declaration VariableDeclaration ConstantDeclaration
+%type <condition_t> Condition;
 
 %start Program
 
@@ -58,8 +61,8 @@ int variableDeclaredLine = 0;
 Program : Block { $$ = new Program($1); $$->Execute();  }
 
 Block : /* Epsilon */ {$$ = new Block(); }
-      | Block Declaration { $1->DeclarationList.push_back($2); cout << "Adding Declaration" << endl; }
-      | Block Statement { $1->StatementList.push_back($2); cout << "Adding Statement" << endl; }
+      | Block Declaration { $1->DeclarationList.push_back($2);  }
+      | Block Statement { $1->StatementList.push_back($2); }
 
 
 Declaration : VariableDeclaration
@@ -81,15 +84,15 @@ PrintStmt : PRINT Expression { $$ = new PrintStmt($2); }
 
 IfStmt : IF {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();}
 
-DoStmt : LOOP {programSymbolTable->EnterScope();} Condition END {programSymbolTable->ExitScope();} 
+DoStmt : LOOP Condition END { $$ = new LoopStatement($2); }
 
-Condition : /* Epsilon */
-            | Condition DO {programSymbolTable->EnterScope();} Expression TARROW Block END  {programSymbolTable->ExitScope();} 
+Condition : /* Epsilon */ {$$ = new Condition();}
+            | Condition DO Expression TARROW Block END {$1->ConditionSetList.push_back(make_pair($3, $5)); }
 
 
 Expression : Simple
-           | Simple RELOP Simple { $$ = new Comparison($1, $3, yylval.relOp); }
-           | Simple TEQ Simple { $$ = new Comparison($1, $3, yylval.relOp); }
+           | Simple RELOP Simple { $$ = new Comparison($1, $3, static_cast<RelationalOperator_t>($2)); }
+           | Simple TEQ Simple { $$ = new Comparison($1, $3, static_cast<RelationalOperator_t>($2)); }
 
 Simple : UniTerm 
        | Simple TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
@@ -101,7 +104,7 @@ Term : Factor
      | Factor TATOP Term {$$ = new AtExpression($1, $3); }
 
 Factor : LPAREN Expression RPAREN { $$ = $2; }
-        | TNUMBER { $$ = new Factor(yyval.num); }
+        | TNUMBER { $$ = new Factor($1); }
         | TIDENTIFIER { 
             $$ = new Factor(*$1);
              }
