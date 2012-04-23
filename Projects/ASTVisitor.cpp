@@ -101,6 +101,31 @@ Comparison::~Comparison()
 
 int Comparison::Execute()
 {
+    int left_value = left->Execute();
+    int right_value = right->Execute();
+    switch(_compOp)
+    {
+        case N_EQ:
+            return left_value != right_value ? true : false;
+        case IS_EQ:
+            return left_value == right_value ? true : false;
+            break;
+        case LT_EQ:
+            return left_value <= right_value ? true : false;
+            break;
+        case GT_EQ:
+            return left_value >= right_value ? true : false;
+            break;
+        case GT:
+            return left_value > right_value ? true : false;
+            break;
+        case LT:
+            return left_value < right_value ? true : false;
+            break;
+        default:
+            throw runtime_error("Invalid Comparison Operator");
+            break;
+    }
     return 0;
 }
 

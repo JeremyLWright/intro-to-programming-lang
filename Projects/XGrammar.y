@@ -20,10 +20,6 @@ void checkDeclaration(string const & s);
 void checkConstDeclaration(string const & s, Symbol::valueType v, bool isConst);
 void checkExistance(string const & s); 
 int variableDeclaredLine = 0;
-typedef vector<Statement*> StatementList_t;
-StatementList_t StatementList;
-typedef vector<Declaration*> DeclarationList_t;
-DeclarationList_t DeclarationList;
 
 %}
 
@@ -31,6 +27,7 @@ DeclarationList_t DeclarationList;
     int token;
     string* s;
     int num;
+    RelationalOperator_t relOp;
 
     /* AST Symbols */
     Factor *factor_t;
@@ -39,6 +36,7 @@ DeclarationList_t DeclarationList;
     Statement *statement_t;
     Declaration *declaration_t;
     Program *program_t;
+    Block *block_t;
 }
 
 %token <s> TIDENTIFIER
@@ -51,30 +49,17 @@ DeclarationList_t DeclarationList;
 %type <statement_t> Statement Assignment PrintStmt IfStmt DoStmt;
 %type <expression_t> Factor Expression Simple UniTerm Term;
 %type <program_t> Program;
+%type <block_t> Block;
 %type <declaration_t> Declaration VariableDeclaration ConstantDeclaration
 
 %start Program
 
 %%
-Program : Block { $$ = new Program(); cout << $$->ToString(); 
-        for(DeclarationList_t::iterator i = DeclarationList.begin();
-                i != DeclarationList.end();
-                ++i)
-            {
-                (*i)->Execute();
-            }
+Program : Block { $$ = new Program($1); $$->Execute();  }
 
-        for(StatementList_t::iterator i = StatementList.begin();
-                i != StatementList.end();
-                ++i)
-            {
-                (*i)->Execute();
-            }
-        }
-
-Block : /* Epsilon */
-      | Block Declaration { DeclarationList.push_back($2); cout << "Adding Declaration" << endl; }
-      | Block Statement { StatementList.push_back($2); cout << "Adding Statement" << endl; }
+Block : /* Epsilon */ {$$ = new Block(); }
+      | Block Declaration { $1->DeclarationList.push_back($2); cout << "Adding Declaration" << endl; }
+      | Block Statement { $1->StatementList.push_back($2); cout << "Adding Statement" << endl; }
 
 
 Declaration : VariableDeclaration
@@ -103,8 +88,8 @@ Condition : /* Epsilon */
 
 
 Expression : Simple
-           | Simple RELOP Simple { $$ = new Comparison($1, $3, $2); }
-           | Simple TEQ Simple { $$ = new Comparison($1, $3, $2); }
+           | Simple RELOP Simple { $$ = new Comparison($1, $3, yylval.relOp); }
+           | Simple TEQ Simple { $$ = new Comparison($1, $3, yylval.relOp); }
 
 Simple : UniTerm 
        | Simple TAMPOP UniTerm { $$ = new AmpersandExpression($1, $3); }
@@ -116,7 +101,7 @@ Term : Factor
      | Factor TATOP Term {$$ = new AtExpression($1, $3); }
 
 Factor : LPAREN Expression RPAREN { $$ = $2; }
-        | TNUMBER { $$ = new Factor($1); }
+        | TNUMBER { $$ = new Factor(yyval.num); }
         | TIDENTIFIER { 
             $$ = new Factor(*$1);
              }
