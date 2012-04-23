@@ -163,7 +163,7 @@ struct Assignment : public Statement {
     virtual void Execute()
     {
         int value = _rhs->Execute();
-        cout << "Assigning " << value << " to " << _identifier << endl;
+        //cout << "Assigning " << value << " to " << _identifier << endl;
 
         programSymbolTable->GetSymbol(_identifier)->SetValue(_rhs->Execute());
     }
@@ -449,7 +449,11 @@ struct LoopStatement : Statement {
 
     virtual void Execute()
     {
-        while(_cond->Execute() == true); //Execute until all statements are false
+        while(_cond->Execute() != true)
+        {   
+            //Execute until all statements are false
+            //cout << "Executing Condition..." << endl;
+        }
     }
 
     virtual string ToString()
