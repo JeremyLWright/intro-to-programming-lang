@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS = -O2
-OBJS = Symbol.o main.o SymbolTable.o XLexer.o XParser.o
+OBJS = Symbol.o main.o SymbolTable.o XLexer.o XParser.o ASTVisitor.o
 
 %.o: %.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
