@@ -58,12 +58,12 @@ extern "C"
 "%"                     return TOKEN(TPEROP);
 "@"                     return TOKEN(TATOP);
 ":="                    return TOKEN(TASSIGN);
-"/="                    return TOKEN(RELOP);
-"<="                    return TOKEN(RELOP);
-">="                    return TOKEN(RELOP);
-">"                    return TOKEN(RELOP);
-"<"                    return TOKEN(RELOP);
-"="                     return TOKEN(TEQ);
+"/="                    { yylval.relOp = N_EQ; return TOKEN(RELOP); }
+"<="                    { yylval.relOp = LT_EQ; return TOKEN(RELOP); }
+">="                    { yylval.relOp = GT_EQ; return TOKEN(RELOP); }
+">"                     { yylval.relOp = GT;    return TOKEN(RELOP); }
+"<"                     { yylval.relOp = LT;    return TOKEN(RELOP); }
+"="                     { yylval.relOp = IS_EQ; return TOKEN(TEQ); }
 . cout << "line " << yylineno << ": lexical error - illegal tokens" << endl;
 %%
 /*

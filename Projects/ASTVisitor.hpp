@@ -16,16 +16,18 @@ using namespace std;
 
 extern int yylineno;
 extern SymbolTable::Ptr programSymbolTable;
-struct Program {
-    void Execute()
-    {
 
-    }
-    virtual string ToString()
-    {
-        return "Program:: ";  
-    }
+enum RelationalOperator_t {
+    IS_EQ,
+    N_EQ,
+    LT_EQ,
+    GT_EQ,
+    GT,
+    LT
 };
+
+
+
 
 struct ASTNode {
     public: 
@@ -33,12 +35,6 @@ struct ASTNode {
 };
 
 
-struct Block : public ASTNode {
-    virtual string ToString()
-    {
-        return "Block:: ";  
-    }
-};
 
 struct Declaration : public ASTNode {
     virtual void Execute() = 0;
@@ -271,7 +267,7 @@ struct AtExpression : public OperatorExpression {
    */
 
 struct Comparison : public OperatorExpression {
-    Comparison(Expression* L, Expression* R, int compOp):
+    Comparison(Expression* L, Expression* R, RelationalOperator_t compOp):
         OperatorExpression(L, R),
         _compOp(compOp)
     {
@@ -279,7 +275,7 @@ struct Comparison : public OperatorExpression {
     virtual ~Comparison();
     virtual int Execute();
     virtual void Print();
-    int _compOp;
+    RelationalOperator_t _compOp;
 };
 
 struct Term : public Expression {
@@ -351,5 +347,87 @@ struct Factor : public Expression {
 
 };
 
+typedef vector<Statement*> StatementList_t;
+typedef vector<Declaration*> DeclarationList_t;
+
+struct Block {
+    StatementList_t StatementList;
+    DeclarationList_t DeclarationList;
+
+    void Execute()
+    {
+        for(DeclarationList_t::iterator i = DeclarationList.begin();
+                i != DeclarationList.end();
+                ++i)
+        {
+            (*i)->Execute();
+        }
+
+        for(StatementList_t::iterator i = StatementList.begin();
+                i != StatementList.end();
+                ++i)
+        {
+            (*i)->Execute();
+        }
+
+    }
+};
+
+
+struct Program {
+    Program(Block* block):
+    _block(block)
+    {
+    }
+    void Execute()
+    {
+        _block->Execute();
+    }
+    virtual string ToString()
+    {
+        return "Program:: ";  
+    }
+    Block* _block;
+
+};
+
+
+
+#if 0
+struct LoopStatement : Statement {
+    LoopStatement(Condition* cond)
+    {
+
+    }
+
+    virtual void Execute()
+    {
+        while(_cond->Execute() == true);
+    }
+
+    virtual string ToString()
+    {
+        return "Loop::";
+        
+    }
+
+    Condition* _cond;
+};
+
+struct ConditionStatement : Statement {
+    ConditionStatement(Expression* expr)
+    {
+    }
+    
+    virtual void Execute()
+    {
+    }
+
+    virtual string ToString()
+    {
+        return "ConditionStmt::";
+    }
+};
+#endif
 
 #endif /* end of include guard: _ASTVISITOR */
