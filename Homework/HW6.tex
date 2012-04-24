@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{syntax}
+\usepackage{synttree}
+\usepackage[left=0.75in, top=1in, right=0.75in, bottom=1in]{geometry}
+\pagestyle{plain}
+\begin{document}
+    \rhead{Jeremy Wright\\CSE 340: Homework 6}
+    \thispagestyle{fancy}
+
+    % The list environment is just to get some vertical spacing
+    \list{} \item \endlist
+
+    % Let the homework begin!
+    \section*{3.1}
+    Given the following C function:
+    \begin{lstlisting}
+        power(a, b)
+        {
+            int i;
+            double temp;
+            for(i = 1; i <= b; ++i)
+            {
+                temp += a;
+            }
+            return temp;
+        }
+    \end{lstlisting}
+    Rewrite in a recursive form:
+    \begin{lstlisting}
+        power(a, b)
+        {
+            if(b == 1)
+            {
+                return a;
+            }
+            else
+                return power(a*a, b--);
+        }
+    \end{lstlisting}
+    Rewrite in a functional form:
+    \begin{lstlisting}
+        ( define power
+            ( lambda (a, b)
+                ( if ( = b 1 )
+                    { power ( (* a a) (b - 1)))))
+    \end{lstlisting}
+    \section*{3.5}
+    Given the following function:
+    \begin{lstlisting}
+        int readMax( )
+        {
+            int max, x;
+            scanf(``%d'', &x);
+            if(x != 0)
+            {
+                max = x;
+                while(x !&=& 0)
+                {
+                    scanf(''%d'', &x);
+                    if(x > max) max = x;
+                }
+            }
+            return max;
+                
+        }
+    \end{lstlisting}
+    Rewrite as functional as possible:
+    \begin{lstlisting}
+        int readMax(max, x)
+        {
+            int temp;
+            scanf(''%d'', &temp);
+            if(temp &=&  0)
+                return max
+            else
+                return readMax(max, temp);
+        }
+    \end{lstlisting}
+    \section*{3.39}
+    \subsection*{a}
+    \[ ( \lambda x. ( ( \lambda y. ( * 2 y ) ) ( + x y ) ) ) y \]
+    \[\beta ( \lambda x. ( * 2 y   ( + x y ) ) ) y \]
+    \[\alpha (( * 2 x ( + x y ) ) ) y \]
+    \[\beta (( * 2 x ( + x ) ) ) y \]
+    \subsection*{b}
+    \[ ( \lambda x. \lambda y. ( x y ) ) ( \lambda z. ( z y ) ) \]
+    \[\alpha ( \lambda x. \lambda y. ( x y ) ) ( \lambda z. ( x y ) ) \]
+    \[\beta ( \lambda x. \lambda y. ( x y ) ) ( z ) \]
+    \[\beta ( \lambda x. ( z ) ) \]
+    \section*{3.40}
+    \[ ( \lambda x. \lambda y. \lambda f. f x y ) \]
+    \[ ( \lambda z. z (\lambda x. \lambda y. x ) ) \]
+    \[ (  \lambda z. z ( \lambda x. (\lambda y. y )) \]
+    \end{document}
